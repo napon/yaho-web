@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     });
     const data = await response.json();
     return NextResponse.json(data.results, { status: response.status });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Proxy error:', error);
     return NextResponse.json({ error: 'Error proxying request' }, { status: 500 });
   }

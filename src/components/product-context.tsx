@@ -17,7 +17,6 @@ type ProductContextType = {
   updateProduct: (product: Product) => void
   deleteProduct: (id: number) => void
   searchProducts: (query: string, category?: string) => Product[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   search: (query: string) => Promise<any>
 }
 
