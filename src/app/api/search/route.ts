@@ -24,7 +24,7 @@ const buildQuery = (query: string) => ({
   }
 });
 
-export async function getAuthToken() {
+async function getAuthToken() {
   const auth = new JWT({
     email: credentials.client_email,
     key: credentials.private_key,
