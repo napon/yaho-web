@@ -13,19 +13,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Spinner } from "../common/spinner";
 
 export default function ProductCatalog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchProducts = async (query: string) => {
     const response = await fetch("/api/search?query=" + query);
-    const { results } = await response.json();
+    const { summaryAnswer, results } = await response.json();
     setProducts(
-      results.map((result: ProductSearchResult) => result.document.structData)
+      results?.map(
+        (result: ProductSearchResult) => result.document.structData
+      ) || []
     );
+    setAnswer(summaryAnswer || null);
+    setLoading(false);
   };
 
   const handleProductClick = (product: Product) => {
@@ -80,24 +87,39 @@ export default function ProductCatalog() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  setLoading(true);
                   fetchProducts(searchQuery);
+                }
+                if (e.key === "Escape") {
+                  toast("hello", {
+                    description: "world",
+                  });
                 }
               }}
               className="pl-10"
             />
           </div>
+          {answer && (
+            <div className="max-w-full mt-4 p-4 bg-slate-200 rounded-md text-left justify-start">
+              <p>{answer}</p>
+            </div>
+          )}
         </CardHeader>
       </Card>
-      {products.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={`${product.product_id}-${product.name}`}
-              product={product}
-              onClick={() => handleProductClick(product)}
-            />
-          ))}
-        </div>
+      {loading ? (
+        <Spinner />
+      ) : (
+        products.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={`${product.product_id}-${product.name}`}
+                product={product}
+                onClick={() => handleProductClick(product)}
+              />
+            ))}
+          </div>
+        )
       )}
 
       <ProductDialog

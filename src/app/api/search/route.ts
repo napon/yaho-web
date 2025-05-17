@@ -8,8 +8,9 @@ const serviceAccountJson = Buffer.from(gcpServiceAccount!, "base64").toString(
   "utf8"
 );
 const credentials = JSON.parse(serviceAccountJson);
-// const apiUrL = `https://discoveryengine.clients6.google.com/v1alpha/projects/513631775428/locations/global/collections/default_collection/engines/yaho-structured-search_1746192745211/servingConfigs/default_search:search?key=AIzaSyCI-zsRP85UVOi0DjtiCwWBwQ1djDy741g`
-const apiUrl = `https://discoveryengine.googleapis.com/v1alpha/projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/servingConfigs/default_search:search`;
+const newSession = `projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/sessions/-`;
+const searchUrl = `https://discoveryengine.googleapis.com/v1alpha/projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/servingConfigs/default_search:search`;
+const answerUrl = `https://discoveryengine.googleapis.com/v1alpha/projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/servingConfigs/default_answer:answer`;
 
 const buildQuery = (query: string) => ({
   query,
@@ -24,6 +25,40 @@ const buildQuery = (query: string) => ({
   languageCode: "en-US",
   userInfo: {
     timeZone: "Asia/Taipei",
+  },
+  session: newSession,
+});
+
+const buildAnswerQuery = (
+  queryId: string,
+  query: string,
+  sessionName: string
+) => ({
+  query: {
+    text: query,
+    queryId: queryId,
+  },
+  session: sessionName,
+  answerGenerationSpec: {
+    ignoreAdversarialQuery: false,
+    ignoreNonAnswerSeekingQuery: true,
+    ignoreLowRelevantContent: true,
+    multimodalSpec: {
+      imageSource: "ALL_AVAILABLE_SOURCES",
+    },
+    includeCitations: true,
+    promptSpec: {
+      preamble:
+        "Given the conversation between an office furniture product sales agent and a helpful assistant responding with some office furniture product recommendations, create a final answer in the same language as the initial query from the user. The answer should use all relevant information from the search results, not introduce any additional information, and use exactly the same words as the search results when possible. The summarized answer should be brief, no more than 1 or 2 sentences.",
+    },
+    modelSpec: {
+      modelVersion: "gemini-2.0-flash-001/answer_gen/v1",
+    },
+  },
+  queryUnderstandingSpec: {
+    queryClassificationSpec: {
+      types: ["NON_ANSWER_SEEKING_QUERY", "NON_ANSWER_SEEKING_QUERY_V2"],
+    },
   },
 });
 
@@ -53,7 +88,7 @@ export async function GET(request: Request) {
     const token = await getAuthToken();
 
     // Forward the search params
-    const response = await fetch(apiUrl, {
+    const response = await fetch(searchUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,10 +96,34 @@ export async function GET(request: Request) {
       },
       body: JSON.stringify(buildQuery(query)),
     });
+
     const data = await response.json();
-    console.log(JSON.stringify(data, null, 2));
-    // console.log(JSON.stringify(results, null, 2));
-    return NextResponse.json(data, { status: response.status });
+    const sessionInfo = data.sessionInfo;
+    let summaryAnswer = undefined;
+    if (sessionInfo) {
+      const { name, queryId } = sessionInfo;
+      const answerResponse = await fetch(answerUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(buildAnswerQuery(queryId, query, name)),
+      });
+      const { answer } = await answerResponse.json();
+
+      if (
+        answer.answerText &&
+        answer.answerText.length !==
+          "No results could be found. Try rephrasing the search query."
+      ) {
+        summaryAnswer = answer.answerText;
+      }
+    }
+    return NextResponse.json(
+      { ...data, summaryAnswer },
+      { status: response.status }
+    );
   } catch (error: any) {
     console.error("Proxy error:", error);
     return NextResponse.json(

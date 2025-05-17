@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Save, X, Loader2, Plus, Trash } from "lucide-react";
+import { Pencil, Save, X, Loader2, Plus, Trash, Wand } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -412,7 +412,7 @@ export function ProductDialog({
         }
       }}
     >
-      <DialogContent className="max-w-[800px] max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="min-w-[60vw] max-h-[90vh] overflow-hidden flex flex-col [&>button]:hidden">
         <DialogHeader className="flex flex-row items-center justify-between">
           <div>
             <DialogTitle>{currentProduct.name}</DialogTitle>
@@ -449,7 +449,7 @@ export function ProductDialog({
                 </div>
               ) : (
                 <Button variant="outline" size="sm" onClick={handleEdit}>
-                  <Pencil className="h-4 w-4 mr-1" /> Edit
+                  <Wand className="h-4 w-4 mr-1" /> Fine Tune
                 </Button>
               )}
             </div>
@@ -501,7 +501,7 @@ export function ProductDialog({
                           <Label htmlFor="brand">Brand</Label>
                           <Input
                             id="brand"
-                            value={currentProduct.brand || ""}
+                            value={currentProduct.brand || "Unknown Brand"}
                             onChange={(e) =>
                               handleChange("brand", e.target.value)
                             }
@@ -1361,7 +1361,6 @@ export function ProductDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Close
           </Button>
-          {!isEditing && <Button>Add to Cart</Button>}
         </div>
       </DialogContent>
     </Dialog>

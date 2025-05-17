@@ -4,7 +4,7 @@ import { indexBucket } from "@/lib/gcs";
 // This route is used to update the product data for LLM
 export async function POST(req: NextRequest) {
   const { product } = await req.json();
-  const filePath = `${product.product_id}.json`;
+  const filePath = `${product.id}.json`;
   const blob = indexBucket.file(filePath);
 
   const buffer = await JSON.stringify(product);
