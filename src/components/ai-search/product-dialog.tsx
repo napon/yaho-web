@@ -27,6 +27,7 @@ import {
 import { MultiSelect } from "@/components/common/multi-select";
 import { Carousel } from "@/components/ui/carousel";
 import type { Product } from "@/types/product";
+import { useAuth } from "@clerk/nextjs";
 
 interface ProductDialogProps {
   product: Product | null;
@@ -41,12 +42,15 @@ export function ProductDialog({
   onOpenChange,
   onSave,
 }: ProductDialogProps) {
+  const { sessionClaims } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newResourceUrl, setNewResourceUrl] = useState("");
+
+  const isAdmin = sessionClaims?.metadata.role === "admin";
 
   // Sample options for multi-select fields
   const colorOptions = [
@@ -422,7 +426,7 @@ export function ProductDialog({
               {currentProduct.price_ntd || "N/A"}
             </DialogDescription>
           </div>
-          {onSave && (
+          {onSave && isAdmin && (
             <div>
               {isEditing ? (
                 <div className="flex gap-2">
