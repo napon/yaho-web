@@ -1,9 +1,10 @@
 {
+  "lang": "zh",
   "common": {
     "welcome": "欢迎",
     "home": "首页",
     "about": "关于",
-    "contact": "联系我们",
+    "contact": "联系",
     "login": "登录",
     "logout": "退出",
     "signup": "注册",
@@ -28,8 +29,13 @@
     "description": "输入查询以查找相关产品",
     "searchPlaceholder": "输入查询并按回车键搜索",
     "updateSuccess": "产品已更新",
-    "updateSuccessMessage": "更新将在几分钟内反映在目录中",
+    "updateSuccessMessage": "更新将在几分钟内反映在目录中。",
     "updateError": "更新产品失败"
+  },
+  "productCard": {
+    "material": "材质",
+    "moreColors": "还有 {count} 个颜色",
+    "finishes": "{count} 种表面处理"
   },
   "tabs": {
     "fileBrowser": "数据源",
@@ -52,7 +58,7 @@
     "folder": {
       "create": {
         "title": "创建新文件夹",
-        "description": "在当前路径输入新文件夹名称：{path}。",
+        "description": "在当前路径中输入新文件夹的名称：{path}。",
         "placeholder": "文件夹名称（例如：'我的文档'）",
         "button": "创建文件夹",
         "cancel": "取消",
@@ -77,14 +83,14 @@
       "name": "名称",
       "size": "大小",
       "lastModified": "最后修改",
-      "loading": "正在加载..."
+      "loading": "正在加载项目..."
     },
     "actions": {
       "viewDownload": "查看/下载",
       "openFolder": "打开文件夹",
       "delete": "删除",
       "deleteConfirm": "确定要删除{type} '{name}'吗？",
-      "deleteFolderWarning": " 这将删除其所有内容。",
+      "deleteFolderWarning": "这将删除其所有内容。",
       "deleteSuccess": "删除成功",
       "deleteSuccessDescription": "{type} '{name}' 已删除。",
       "deleteError": "删除{type}时出错",
@@ -97,6 +103,91 @@
       "error": "刷新数据时出错",
       "errorDescription": "请稍后重试",
       "remaining": "剩余刷新次数：∞"
+    }
+  },
+  "productDialog": {
+    "tabs": {
+      "details": "详情",
+      "specifications": "规格",
+      "customizations": "定制"
+    },
+    "details": {
+      "productName": "产品名称",
+      "productId": "产品编号",
+      "brand": "品牌",
+      "description": "描述",
+      "originalPrice": "原价",
+      "currency": "货币",
+      "priceNTD": "价格 (新台币)",
+      "images": "图片",
+      "noImages": "尚未添加图片。",
+      "addImage": "添加",
+      "enterImageUrl": "输入图片链接",
+      "resources": "资源",
+      "noResources": "尚未添加资源。",
+      "addResource": "添加",
+      "enterResourceUrl": "输入资源链接",
+      "colors": {
+        "english": "颜色（英文）",
+        "chinese": "颜色（中文）",
+        "placeholder": "选择颜色",
+        "placeholderChinese": "选择颜色（中文）"
+      },
+      "materials": {
+        "english": "材质（英文）",
+        "chinese": "材质（中文）",
+        "placeholder": "选择材质",
+        "placeholderChinese": "选择材质（中文）"
+      },
+      "finishes": {
+        "english": "表面处理（英文）",
+        "chinese": "表面处理（中文）",
+        "placeholder": "选择表面处理",
+        "placeholderChinese": "选择表面处理（中文）"
+      },
+      "attributes": {
+        "english": "其他属性（英文）",
+        "chinese": "其他属性（中文）",
+        "placeholder": "选择属性",
+        "placeholderChinese": "选择属性（中文）"
+      },
+      "otherAttributes": {
+        "title": "其他属性",
+        "add": "添加",
+        "key": "键",
+        "value": "值",
+        "none": "尚未添加其他属性。"
+      }
+    },
+    "specifications": {
+      "dimensions": "尺寸",
+      "width": "宽度",
+      "length": "长度",
+      "height": "高度",
+      "cm": "厘米",
+      "otherSpecs": "其他规格",
+      "warranty": "保修",
+      "years": "年",
+      "leadTime": "交货期",
+      "days": "天",
+      "allAttributes": "所有属性",
+      "feature": "特性"
+    },
+    "customizations": {
+      "title": "产品定制",
+      "add": "添加定制项",
+      "name": "定制名称",
+      "options": "选项",
+      "addOption": "添加选项",
+      "none": "此产品暂无可用定制选项。"
+    },
+    "actions": {
+      "fineTune": "微调",
+      "cancel": "取消",
+      "save": "保存",
+      "saving": "保存中...",
+      "close": "关闭",
+      "discardChanges": "放弃更改？"
     }
   }
 }

@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/types/product";
 import { Carousel } from "../ui/carousel";
+import { useTranslation } from "@/lib/i18n";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +12,17 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick }: ProductCardProps) {
+  const { t } = useTranslation();
+  const isChinese = t("lang") === "zh";
+
+  const colors = isChinese ? product.colors_chinese : product.colors_english;
+  const materials = isChinese
+    ? product.product_materials_chinese
+    : product.product_materials_english;
+  const finishes = isChinese
+    ? product.product_finishes_chinese
+    : product.product_finishes_english;
+
   return (
     <Card
       className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
@@ -28,34 +40,32 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         <h3 className="font-semibold text-lg line-clamp-1">{product.name}</h3>
         <p className="text-sm text-muted-foreground mb-2">{product.brand}</p>
 
-        {product.product_materials_english &&
-          product.product_materials_english.length > 0 && (
-            <div className="flex items-start gap-1 mt-2">
-              <span className="text-xs font-medium">Material:</span>
-              <span className="text-xs">
-                {product.product_materials_english.join(", ")}
-              </span>
-            </div>
-          )}
+        {materials && materials.length > 0 && (
+          <div className="flex items-start gap-1 mt-2">
+            <span className="text-xs font-medium">
+              {t("productCard.material")}:
+            </span>
+            <span className="text-xs">{materials.join(", ")}</span>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="p-4 pt-0 flex flex-wrap gap-1">
-        {(product.colors_english || []).slice(0, 3).map((color, index) => (
+        {(colors || []).slice(0, 3).map((color, index) => (
           <Badge key={index} variant="outline" className="text-xs">
             {color}
           </Badge>
         ))}
-        {product.colors_english && product.colors_english.length > 3 && (
+        {colors && colors.length > 3 && (
           <Badge variant="outline" className="text-xs">
-            +{product.colors_english.length - 3} more
+            {t("productCard.moreColors", { count: colors.length - 3 })}
           </Badge>
         )}
 
-        {product.product_finishes_english &&
-          product.product_finishes_english.length > 0 && (
-            <Badge variant="secondary" className="text-xs ml-auto">
-              {product.product_finishes_english.length} finishes
-            </Badge>
-          )}
+        {finishes && finishes.length > 0 && (
+          <Badge variant="secondary" className="text-xs ml-auto">
+            {t("productCard.finishes", { count: finishes.length })}
+          </Badge>
+        )}
       </CardFooter>
     </Card>
   );

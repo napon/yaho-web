@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Save, X, Loader2, Plus, Trash, Wand } from "lucide-react";
+import { Save, X, Loader2, Plus, Trash, Wand } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,17 @@ import { MultiSelect } from "@/components/common/multi-select";
 import { Carousel } from "@/components/ui/carousel";
 import type { Product } from "@/types/product";
 import { useAuth } from "@clerk/nextjs";
+import { useTranslation } from "@/lib/i18n";
+import {
+  productColorEnglish,
+  productColorChinese,
+  productFinishChinese,
+  productFinishEnglish,
+  productMaterialChinese,
+  productMaterialEnglish,
+  productAdditionalAttributes,
+  productAdditionalAttributesChinese,
+} from "@/types/product";
 
 interface ProductDialogProps {
   product: Product | null;
@@ -43,6 +54,7 @@ export function ProductDialog({
   onSave,
 }: ProductDialogProps) {
   const { sessionClaims } = useAuth();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState<Product | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,129 +63,20 @@ export function ProductDialog({
   const [newResourceUrl, setNewResourceUrl] = useState("");
 
   const isAdmin = sessionClaims?.metadata.role === "admin";
+  const isChinese = t("lang") === "zh";
 
-  // Sample options for multi-select fields
-  const colorOptions = [
-    "Red",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Black",
-    "White",
-    "Gray",
-    "Purple",
-    "Orange",
-    "Pink",
-    "Brown",
-    "Beige",
-    "Oak",
-    "Walnut",
-    "Cherry",
-  ];
-
-  const colorChineseOptions = [
-    "紅色",
-    "藍色",
-    "綠色",
-    "黃色",
-    "黑色",
-    "白色",
-    "灰色",
-    "紫色",
-    "橙色",
-    "粉色",
-    "棕色",
-    "米色",
-    "橡木",
-    "胡桃木",
-    "櫻桃木",
-  ];
-
-  const materialOptions = [
-    "Wood",
-    "Metal",
-    "Glass",
-    "Plastic",
-    "Leather",
-    "Fabric",
-    "Stone",
-    "Ceramic",
-    "Composite",
-    "Mesh",
-    "Solid Wood",
-    "Engineered Wood",
-  ];
-
-  const materialChineseOptions = [
-    "木材",
-    "金屬",
-    "玻璃",
-    "塑料",
-    "皮革",
-    "布料",
-    "石材",
-    "陶瓷",
-    "複合材料",
-    "網布",
-    "實木",
-    "工程木",
-  ];
-
-  const finishOptions = [
-    "Matte",
-    "Glossy",
-    "Semi-Gloss",
-    "Satin",
-    "Textured",
-    "Distressed",
-    "Painted",
-    "Natural",
-    "Stained",
-    "Laminate",
-  ];
-
-  const finishChineseOptions = [
-    "啞光",
-    "光澤",
-    "半光澤",
-    "緞面",
-    "紋理",
-    "做舊",
-    "上漆",
-    "自然",
-    "染色",
-    "層壓板",
-  ];
-
-  const attributeOptions = [
-    "Waterproof",
-    "Stain Resistant",
-    "Scratch Resistant",
-    "Heat Resistant",
-    "Easy Assembly",
-    "Eco-Friendly",
-    "Lightweight",
-    "Heavy Duty",
-    "Adjustable Height",
-    "Swivel Base",
-    "Wall Mountable",
-    "Adjustable Shelves",
-  ];
-
-  const attributeChineseOptions = [
-    "防水",
-    "防污",
-    "防刮",
-    "耐熱",
-    "易組裝",
-    "環保",
-    "輕量",
-    "重型",
-    "可調高度",
-    "旋轉底座",
-    "可壁掛",
-    "可調節層板",
-  ];
+  const colorOptionsToUse = isChinese
+    ? productColorChinese
+    : productColorEnglish;
+  const materialOptionsToUse = isChinese
+    ? productMaterialChinese
+    : productMaterialEnglish;
+  const finishOptionsToUse = isChinese
+    ? productFinishChinese
+    : productFinishEnglish;
+  const attributeOptionsToUse = isChinese
+    ? productAdditionalAttributesChinese
+    : productAdditionalAttributes;
 
   if (!product) return null;
 
@@ -436,24 +339,27 @@ export function ProductDialog({
                     onClick={handleCancel}
                     disabled={isSaving}
                   >
-                    <X className="h-4 w-4 mr-1" /> Cancel
+                    <X className="h-4 w-4 mr-1" />{" "}
+                    {t("productDialog.actions.cancel")}
                   </Button>
                   <Button size="sm" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-1 animate-spin" />{" "}
-                        Saving...
+                        {t("productDialog.actions.saving")}
                       </>
                     ) : (
                       <>
-                        <Save className="h-4 w-4 mr-1" /> Save
+                        <Save className="h-4 w-4 mr-1" />{" "}
+                        {t("productDialog.actions.save")}
                       </>
                     )}
                   </Button>
                 </div>
               ) : (
                 <Button variant="outline" size="sm" onClick={handleEdit}>
-                  <Wand className="h-4 w-4 mr-1" /> Fine Tune
+                  <Wand className="h-4 w-4 mr-1" />{" "}
+                  {t("productDialog.actions.fineTune")}
                 </Button>
               )}
             </div>
@@ -468,9 +374,15 @@ export function ProductDialog({
               className="w-full"
             >
               <TabsList className="grid grid-cols-3 mb-4">
-                <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="specifications">Specifications</TabsTrigger>
-                <TabsTrigger value="customizations">Customizations</TabsTrigger>
+                <TabsTrigger value="details">
+                  {t("productDialog.tabs.details")}
+                </TabsTrigger>
+                <TabsTrigger value="specifications">
+                  {t("productDialog.tabs.specifications")}
+                </TabsTrigger>
+                <TabsTrigger value="customizations">
+                  {t("productDialog.tabs.customizations")}
+                </TabsTrigger>
               </TabsList>
 
               {isEditing ? (
@@ -480,7 +392,9 @@ export function ProductDialog({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="name">Product Name</Label>
+                          <Label htmlFor="name">
+                            {t("productDialog.details.productName")}
+                          </Label>
                           <Input
                             id="name"
                             value={currentProduct.name || ""}
@@ -491,7 +405,9 @@ export function ProductDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="product_id">Product ID</Label>
+                          <Label htmlFor="product_id">
+                            {t("productDialog.details.productId")}
+                          </Label>
                           <Input
                             id="product_id"
                             value={currentProduct.product_id}
@@ -502,7 +418,9 @@ export function ProductDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="brand">Brand</Label>
+                          <Label htmlFor="brand">
+                            {t("productDialog.details.brand")}
+                          </Label>
                           <Input
                             id="brand"
                             value={currentProduct.brand || "Unknown Brand"}
@@ -513,7 +431,9 @@ export function ProductDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="description">Description</Label>
+                          <Label htmlFor="description">
+                            {t("productDialog.details.description")}
+                          </Label>
                           <Textarea
                             id="description"
                             value={currentProduct.description || ""}
@@ -527,7 +447,7 @@ export function ProductDialog({
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-2">
                             <Label htmlFor="original_price">
-                              Original Price
+                              {t("productDialog.details.originalPrice")}
                             </Label>
                             <Input
                               id="original_price"
@@ -544,7 +464,7 @@ export function ProductDialog({
 
                           <div className="space-y-2">
                             <Label htmlFor="original_price_currency">
-                              Currency
+                              {t("productDialog.details.currency")}
                             </Label>
                             <Select
                               value={
@@ -566,7 +486,9 @@ export function ProductDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="price_ntd">Price (NTD)</Label>
+                          <Label htmlFor="price_ntd">
+                            {t("productDialog.details.priceNtd")}
+                          </Label>
                           <Input
                             id="price_ntd"
                             type="number"
@@ -585,7 +507,7 @@ export function ProductDialog({
 
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label>Images</Label>
+                          <Label>{t("productDialog.details.images")}</Label>
                           {(currentProduct.image_urls || []).length > 0 && (
                             <Carousel
                               images={currentProduct.image_urls || []}
@@ -595,7 +517,9 @@ export function ProductDialog({
                           )}
                           <div className="flex gap-2 mb-2">
                             <Input
-                              placeholder="Enter image URL"
+                              placeholder={t(
+                                "productDialog.details.enterImageUrl"
+                              )}
                               value={newImageUrl}
                               onChange={(e) => setNewImageUrl(e.target.value)}
                               className="flex-1"
@@ -607,7 +531,8 @@ export function ProductDialog({
                               onClick={handleAddImage}
                               disabled={!newImageUrl.trim()}
                             >
-                              <Plus className="h-4 w-4 mr-1" /> Add
+                              <Plus className="h-4 w-4 mr-1" />{" "}
+                              {t("productDialog.details.addImage")}
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto">
@@ -630,7 +555,7 @@ export function ProductDialog({
                                   >
                                     <Trash className="h-4 w-4" />
                                     <span className="sr-only">
-                                      Remove image
+                                      {t("productDialog.details.removeImage")}
                                     </span>
                                   </Button>
                                 </div>
@@ -638,7 +563,7 @@ export function ProductDialog({
                             )}
                             {(currentProduct.image_urls || []).length === 0 && (
                               <p className="text-sm text-muted-foreground">
-                                No images added yet.
+                                {t("productDialog.details.noImages")}
                               </p>
                             )}
                           </div>
@@ -646,11 +571,15 @@ export function ProductDialog({
 
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
-                            <Label>Resources</Label>
+                            <Label>
+                              {t("productDialog.details.resources")}
+                            </Label>
                           </div>
                           <div className="flex gap-2 mb-2">
                             <Input
-                              placeholder="Enter resource URL"
+                              placeholder={t(
+                                "productDialog.details.enterResourceUrl"
+                              )}
                               value={newResourceUrl}
                               onChange={(e) =>
                                 setNewResourceUrl(e.target.value)
@@ -664,7 +593,8 @@ export function ProductDialog({
                               onClick={handleAddResource}
                               disabled={!newResourceUrl.trim()}
                             >
-                              <Plus className="h-4 w-4 mr-1" /> Add
+                              <Plus className="h-4 w-4 mr-1" />{" "}
+                              {t("productDialog.details.addResource")}
                             </Button>
                           </div>
                           <div className="grid grid-cols-1 gap-2 max-h-[150px] overflow-y-auto">
@@ -687,7 +617,9 @@ export function ProductDialog({
                                   >
                                     <Trash className="h-4 w-4" />
                                     <span className="sr-only">
-                                      Remove resource
+                                      {t(
+                                        "productDialog.details.removeResource"
+                                      )}
                                     </span>
                                   </Button>
                                 </div>
@@ -696,7 +628,7 @@ export function ProductDialog({
                             {(currentProduct.resource_urls || []).length ===
                               0 && (
                               <p className="text-sm text-muted-foreground">
-                                No resources added yet.
+                                {t("productDialog.details.noResources")}
                               </p>
                             )}
                           </div>
@@ -708,32 +640,62 @@ export function ProductDialog({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="colors_english">Colors (English)</Label>
+                        <Label htmlFor="colors_english">
+                          {t("productDialog.details.colors.english")}
+                        </Label>
                         <MultiSelect
-                          options={colorOptions.map((color) => ({
+                          options={colorOptionsToUse.map((color) => ({
                             label: color,
                             value: color,
                           }))}
-                          selected={currentProduct.colors_english || []}
-                          onChange={(selected: string[]) =>
-                            handleChange("colors_english", selected)
+                          selected={
+                            isChinese
+                              ? currentProduct.colors_chinese || []
+                              : currentProduct.colors_english || []
                           }
-                          placeholder="Select colors"
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese ? "colors_chinese" : "colors_english",
+                              selected
+                            )
+                          }
+                          placeholder={
+                            isChinese
+                              ? t(
+                                  "productDialog.details.colors.placeholderChinese"
+                                )
+                              : t("productDialog.details.colors.placeholder")
+                          }
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="colors_chinese">Colors (Chinese)</Label>
+                        <Label htmlFor="colors_chinese">
+                          {t("productDialog.details.colors.chinese")}
+                        </Label>
                         <MultiSelect
-                          options={colorChineseOptions.map((color) => ({
+                          options={colorOptionsToUse.map((color) => ({
                             label: color,
                             value: color,
                           }))}
-                          selected={currentProduct.colors_chinese || []}
-                          onChange={(selected: string[]) =>
-                            handleChange("colors_chinese", selected)
+                          selected={
+                            isChinese
+                              ? currentProduct.colors_english || []
+                              : currentProduct.colors_chinese || []
                           }
-                          placeholder="Select colors (Chinese)"
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese ? "colors_english" : "colors_chinese",
+                              selected
+                            )
+                          }
+                          placeholder={
+                            isChinese
+                              ? t(
+                                  "productDialog.details.colors.placeholderEnglish"
+                                )
+                              : t("productDialog.details.colors.placeholder")
+                          }
                         />
                       </div>
                     </div>
@@ -741,10 +703,10 @@ export function ProductDialog({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="product_materials_english">
-                          Materials (English)
+                          {t("productDialog.details.materials.english")}
                         </Label>
                         <MultiSelect
-                          options={materialOptions.map((material) => ({
+                          options={materialOptionsToUse.map((material) => ({
                             label: material,
                             value: material,
                           }))}
@@ -754,16 +716,18 @@ export function ProductDialog({
                           onChange={(selected: string[]) =>
                             handleChange("product_materials_english", selected)
                           }
-                          placeholder="Select materials"
+                          placeholder={t(
+                            "productDialog.details.materials.placeholder"
+                          )}
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="product_materials_chinese">
-                          Materials (Chinese)
+                          {t("productDialog.details.materials.chinese")}
                         </Label>
                         <MultiSelect
-                          options={materialChineseOptions.map((material) => ({
+                          options={materialOptionsToUse.map((material) => ({
                             label: material,
                             value: material,
                           }))}
@@ -773,7 +737,9 @@ export function ProductDialog({
                           onChange={(selected: string[]) =>
                             handleChange("product_materials_chinese", selected)
                           }
-                          placeholder="Select materials (Chinese)"
+                          placeholder={t(
+                            "productDialog.details.materials.placeholderChinese"
+                          )}
                         />
                       </div>
                     </div>
@@ -781,10 +747,10 @@ export function ProductDialog({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="product_finishes_english">
-                          Finishes (English)
+                          {t("productDialog.details.finishes.english")}
                         </Label>
                         <MultiSelect
-                          options={finishOptions.map((finish) => ({
+                          options={finishOptionsToUse.map((finish) => ({
                             label: finish,
                             value: finish,
                           }))}
@@ -794,16 +760,18 @@ export function ProductDialog({
                           onChange={(selected: string[]) =>
                             handleChange("product_finishes_english", selected)
                           }
-                          placeholder="Select finishes"
+                          placeholder={t(
+                            "productDialog.details.finishes.placeholder"
+                          )}
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="product_finishes_chinese">
-                          Finishes (Chinese)
+                          {t("productDialog.details.finishes.chinese")}
                         </Label>
                         <MultiSelect
-                          options={finishChineseOptions.map((finish) => ({
+                          options={finishOptionsToUse.map((finish) => ({
                             label: finish,
                             value: finish,
                           }))}
@@ -813,7 +781,9 @@ export function ProductDialog({
                           onChange={(selected: string[]) =>
                             handleChange("product_finishes_chinese", selected)
                           }
-                          placeholder="Select finishes (Chinese)"
+                          placeholder={t(
+                            "productDialog.details.finishes.placeholderChinese"
+                          )}
                         />
                       </div>
                     </div>
@@ -821,10 +791,10 @@ export function ProductDialog({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="additional_attributes_english">
-                          Additional Attributes (English)
+                          {t("productDialog.details.attributes.english")}
                         </Label>
                         <MultiSelect
-                          options={attributeOptions.map((attr) => ({
+                          options={attributeOptionsToUse.map((attr) => ({
                             label: attr,
                             value: attr,
                           }))}
@@ -837,16 +807,18 @@ export function ProductDialog({
                               selected
                             )
                           }
-                          placeholder="Select attributes"
+                          placeholder={t(
+                            "productDialog.details.attributes.placeholder"
+                          )}
                         />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="additional_attributes_chinese">
-                          Additional Attributes (Chinese)
+                          {t("productDialog.details.attributes.chinese")}
                         </Label>
                         <MultiSelect
-                          options={attributeChineseOptions.map((attr) => ({
+                          options={attributeOptionsToUse.map((attr) => ({
                             label: attr,
                             value: attr,
                           }))}
@@ -859,21 +831,26 @@ export function ProductDialog({
                               selected
                             )
                           }
-                          placeholder="Select attributes (Chinese)"
+                          placeholder={t(
+                            "productDialog.details.attributes.placeholderChinese"
+                          )}
                         />
                       </div>
                     </div>
 
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <Label>Other Attributes</Label>
+                        <Label>
+                          {t("productDialog.details.otherAttributes")}
+                        </Label>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={handleAddOtherAttribute}
                         >
-                          <Plus className="h-4 w-4 mr-1" /> Add
+                          <Plus className="h-4 w-4 mr-1" />{" "}
+                          {t("productDialog.details.otherAttributes.add")}
                         </Button>
                       </div>
                       <div className="grid grid-cols-1 gap-2">
@@ -884,7 +861,9 @@ export function ProductDialog({
                               className="flex items-center gap-2"
                             >
                               <Input
-                                placeholder="Key"
+                                placeholder={t(
+                                  "productDialog.details.otherAttributes.key"
+                                )}
                                 value={attr.key}
                                 onChange={(e) =>
                                   handleUpdateOtherAttribute(
@@ -896,7 +875,9 @@ export function ProductDialog({
                                 className="flex-1"
                               />
                               <Input
-                                placeholder="Value"
+                                placeholder={t(
+                                  "productDialog.details.otherAttributes.value"
+                                )}
                                 value={attr.value}
                                 onChange={(e) =>
                                   handleUpdateOtherAttribute(
@@ -917,7 +898,9 @@ export function ProductDialog({
                               >
                                 <Trash className="h-4 w-4" />
                                 <span className="sr-only">
-                                  Remove attribute
+                                  {t(
+                                    "productDialog.details.otherAttributes.remove"
+                                  )}
                                 </span>
                               </Button>
                             </div>
@@ -926,7 +909,7 @@ export function ProductDialog({
                         {(currentProduct.other_attributes || []).length ===
                           0 && (
                           <p className="text-sm text-muted-foreground">
-                            No other attributes added yet.
+                            {t("productDialog.details.otherAttributes.none")}
                           </p>
                         )}
                       </div>
@@ -936,7 +919,9 @@ export function ProductDialog({
                   <TabsContent value="specifications" className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="width_cm">Width (CM)</Label>
+                        <Label htmlFor="width_cm">
+                          {t("productDialog.specifications.width")}
+                        </Label>
                         <Input
                           id="width_cm"
                           type="number"
@@ -951,7 +936,9 @@ export function ProductDialog({
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="length_cm">Length (CM)</Label>
+                        <Label htmlFor="length_cm">
+                          {t("productDialog.specifications.length")}
+                        </Label>
                         <Input
                           id="length_cm"
                           type="number"
@@ -966,7 +953,9 @@ export function ProductDialog({
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="height_cm">Height (CM)</Label>
+                        <Label htmlFor="height_cm">
+                          {t("productDialog.specifications.height")}
+                        </Label>
                         <Input
                           id="height_cm"
                           type="number"
@@ -981,7 +970,9 @@ export function ProductDialog({
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="warranty_years">Warranty (Years)</Label>
+                        <Label htmlFor="warranty_years">
+                          {t("productDialog.specifications.warranty")}
+                        </Label>
                         <Input
                           id="warranty_years"
                           type="number"
@@ -996,7 +987,9 @@ export function ProductDialog({
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lead_time_days">Lead Time (Days)</Label>
+                        <Label htmlFor="lead_time_days">
+                          {t("productDialog.specifications.leadTime")}
+                        </Label>
                         <Input
                           id="lead_time_days"
                           type="number"
@@ -1015,7 +1008,7 @@ export function ProductDialog({
                   <TabsContent value="customizations" className="space-y-4">
                     <div className="flex justify-between items-center">
                       <h3 className="text-sm font-medium">
-                        Product Customizations
+                        {t("productDialog.customizations.title")}
                       </h3>
                       <Button
                         type="button"
@@ -1023,7 +1016,8 @@ export function ProductDialog({
                         size="sm"
                         onClick={handleAddCustomization}
                       >
-                        <Plus className="h-4 w-4 mr-1" /> Add Customization
+                        <Plus className="h-4 w-4 mr-1" />{" "}
+                        {t("productDialog.customizations.add")}
                       </Button>
                     </div>
 
@@ -1036,7 +1030,9 @@ export function ProductDialog({
                           >
                             <div className="flex items-center justify-between">
                               <Input
-                                placeholder="Customization Name"
+                                placeholder={t(
+                                  "productDialog.customizations.name"
+                                )}
                                 value={customization.name}
                                 onChange={(e) =>
                                   handleUpdateCustomization(
@@ -1055,14 +1051,16 @@ export function ProductDialog({
                               >
                                 <Trash className="h-4 w-4" />
                                 <span className="sr-only">
-                                  Remove customization
+                                  {t("productDialog.customizations.remove")}
                                 </span>
                               </Button>
                             </div>
 
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
-                                <Label>Options</Label>
+                                <Label>
+                                  {t("productDialog.customizations.options")}
+                                </Label>
                                 <Button
                                   type="button"
                                   variant="outline"
@@ -1071,7 +1069,8 @@ export function ProductDialog({
                                     handleAddCustomizationOption(index)
                                   }
                                 >
-                                  <Plus className="h-4 w-4 mr-1" /> Add Option
+                                  <Plus className="h-4 w-4 mr-1" />{" "}
+                                  {t("productDialog.customizations.addOption")}
                                 </Button>
                               </div>
 
@@ -1100,7 +1099,9 @@ export function ProductDialog({
                                       >
                                         <X className="h-4 w-4" />
                                         <span className="sr-only">
-                                          Remove option
+                                          {t(
+                                            "productDialog.customizations.removeOption"
+                                          )}
                                         </span>
                                       </Button>
                                     </div>
@@ -1108,7 +1109,7 @@ export function ProductDialog({
                                 )}
                                 {customization.options.length === 0 && (
                                   <p className="text-sm text-muted-foreground">
-                                    No options added yet.
+                                    {t("productDialog.customizations.none")}
                                   </p>
                                 )}
                               </div>
@@ -1119,7 +1120,7 @@ export function ProductDialog({
                       {(currentProduct.product_customizations || []).length ===
                         0 && (
                         <p className="text-sm text-muted-foreground">
-                          No customizations added yet.
+                          {t("productDialog.customizations.none")}
                         </p>
                       )}
                     </div>
@@ -1139,30 +1140,38 @@ export function ProductDialog({
 
                       <div className="space-y-4">
                         <div>
-                          <h3 className="text-sm font-medium">Description</h3>
+                          <h3 className="text-sm font-medium">
+                            {t("productDialog.details.description")}
+                          </h3>
                           <p className="text-sm text-muted-foreground">
                             {currentProduct.description}
                           </p>
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-medium">Colors</h3>
+                          <h3 className="text-sm font-medium">
+                            {t("productDialog.details.colors")}
+                          </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {(currentProduct.colors_english || []).map(
-                              (color, index) => (
-                                <Badge key={index} variant="outline">
-                                  {color}
-                                </Badge>
-                              )
-                            )}
+                            {(isChinese
+                              ? currentProduct.colors_chinese || []
+                              : currentProduct.colors_english || []
+                            ).map((color, index) => (
+                              <Badge key={index} variant="outline">
+                                {color}
+                              </Badge>
+                            ))}
                           </div>
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-medium">Materials</h3>
+                          <h3 className="text-sm font-medium">
+                            {t("productDialog.details.materials")}
+                          </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {(
-                              currentProduct.product_materials_english || []
+                            {(isChinese
+                              ? currentProduct.product_materials_chinese || []
+                              : currentProduct.product_materials_english || []
                             ).map((material, index) => (
                               <Badge key={index} variant="secondary">
                                 {material}
@@ -1172,10 +1181,13 @@ export function ProductDialog({
                         </div>
 
                         <div>
-                          <h3 className="text-sm font-medium">Finishes</h3>
+                          <h3 className="text-sm font-medium">
+                            {t("productDialog.details.finishes")}
+                          </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {(
-                              currentProduct.product_finishes_english || []
+                            {(isChinese
+                              ? currentProduct.product_finishes_chinese || []
+                              : currentProduct.product_finishes_english || []
                             ).map((finish, index) => (
                               <Badge key={index} variant="outline">
                                 {finish}
@@ -1186,11 +1198,14 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            Additional Attributes
+                            {t("productDialog.details.additionalAttributes")}
                           </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {(
-                              currentProduct.additional_attributes_english || []
+                            {(isChinese
+                              ? currentProduct.additional_attributes_chinese ||
+                                []
+                              : currentProduct.additional_attributes_english ||
+                                []
                             ).map((attr, index) => (
                               <Badge key={index} variant="secondary">
                                 {attr}
@@ -1201,7 +1216,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            Other Attributes
+                            {t("productDialog.details.otherAttributes")}
                           </h3>
                           <div className="space-y-1 mt-1">
                             {(currentProduct.other_attributes || []).map(
@@ -1221,7 +1236,9 @@ export function ProductDialog({
 
                     {(currentProduct.resource_urls || []).length > 0 && (
                       <div>
-                        <h3 className="text-sm font-medium mb-2">Resources</h3>
+                        <h3 className="text-sm font-medium mb-2">
+                          {t("productDialog.details.resources")}
+                        </h3>
                         <div className="space-y-1">
                           {(currentProduct.resource_urls || []).map(
                             (resource, index) => (
@@ -1232,7 +1249,8 @@ export function ProductDialog({
                                   rel="noopener noreferrer"
                                   className="text-primary hover:underline"
                                 >
-                                  Resource {index + 1}
+                                  {t("productDialog.details.resource")}{" "}
+                                  {index + 1}
                                 </a>
                               </div>
                             )
@@ -1245,11 +1263,13 @@ export function ProductDialog({
                   <TabsContent value="specifications" className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium">Dimensions</h3>
+                        <h3 className="text-sm font-medium">
+                          {t("productDialog.specifications.dimensions")}
+                        </h3>
                         <div className="space-y-1">
                           <div className="flex justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Width
+                              {t("productDialog.specifications.width")}
                             </span>
                             <span className="text-sm">
                               {currentProduct.dimensions?.width_cm} cm
@@ -1257,7 +1277,7 @@ export function ProductDialog({
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Length
+                              {t("productDialog.specifications.length")}
                             </span>
                             <span className="text-sm">
                               {currentProduct.dimensions?.length_cm} cm
@@ -1265,7 +1285,7 @@ export function ProductDialog({
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Height
+                              {t("productDialog.specifications.height")}
                             </span>
                             <span className="text-sm">
                               {currentProduct.dimensions?.height_cm} cm
@@ -1276,12 +1296,12 @@ export function ProductDialog({
 
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium">
-                          Other Specifications
+                          {t("productDialog.specifications.otherSpecs")}
                         </h3>
                         <div className="space-y-1">
                           <div className="flex justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Warranty
+                              {t("productDialog.specifications.warranty")}
                             </span>
                             <span className="text-sm">
                               {currentProduct.warranty_years} years
@@ -1289,7 +1309,7 @@ export function ProductDialog({
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Lead Time
+                              {t("productDialog.specifications.leadTime")}
                             </span>
                             <span className="text-sm">
                               {currentProduct.lead_time_days} days
@@ -1303,7 +1323,7 @@ export function ProductDialog({
 
                     <div>
                       <h3 className="text-sm font-medium mb-2">
-                        All Attributes
+                        {t("productDialog.specifications.allAttributes")}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2">
                         {(currentProduct.other_attributes || []).map(
@@ -1316,12 +1336,13 @@ export function ProductDialog({
                             </div>
                           )
                         )}
-                        {(
-                          currentProduct.additional_attributes_english || []
+                        {(isChinese
+                          ? currentProduct.additional_attributes_english || []
+                          : currentProduct.additional_attributes_chinese || []
                         ).map((attr, index) => (
                           <div key={index} className="flex">
                             <span className="text-sm font-medium w-24">
-                              Feature:
+                              {t("productDialog.specifications.feature")}:
                             </span>
                             <span className="text-sm">{attr}</span>
                           </div>
@@ -1351,7 +1372,7 @@ export function ProductDialog({
                       )
                     ) : (
                       <p className="text-sm text-muted-foreground">
-                        No customization options available for this product.
+                        {t("productDialog.customizations.none")}
                       </p>
                     )}
                   </TabsContent>
@@ -1363,7 +1384,7 @@ export function ProductDialog({
 
         <div className="flex justify-end gap-2 mt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Close
+            {t("productDialog.actions.close")}
           </Button>
         </div>
       </DialogContent>

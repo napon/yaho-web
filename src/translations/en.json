@@ -1,4 +1,5 @@
 {
+  "lang": "en",
   "common": {
     "welcome": "Welcome",
     "home": "Home",
@@ -30,6 +31,96 @@
     "updateSuccess": "Product updated",
     "updateSuccessMessage": "The update will be reflected in the catalog in a few minutes.",
     "updateError": "Failed to update product"
+  },
+  "productCard": {
+    "material": "Material",
+    "moreColors": "+{count} more",
+    "finishes": "{count} finishes"
+  },
+  "productDialog": {
+    "tabs": {
+      "details": "Details",
+      "specifications": "Specifications",
+      "customizations": "Customizations"
+    },
+    "details": {
+      "productName": "Product Name",
+      "productId": "Product ID",
+      "brand": "Brand",
+      "description": "Description",
+      "originalPrice": "Original Price",
+      "currency": "Currency",
+      "priceNTD": "Price (NTD)",
+      "images": "Images",
+      "noImages": "No images added yet.",
+      "addImage": "Add",
+      "enterImageUrl": "Enter image URL",
+      "resources": "Resources",
+      "noResources": "No resources added yet.",
+      "addResource": "Add",
+      "enterResourceUrl": "Enter resource URL",
+      "colors": {
+        "english": "Colors (English)",
+        "chinese": "Colors (Chinese)",
+        "placeholder": "Select colors",
+        "placeholderChinese": "Select colors (Chinese)"
+      },
+      "materials": {
+        "english": "Materials (English)",
+        "chinese": "Materials (Chinese)",
+        "placeholder": "Select materials",
+        "placeholderChinese": "Select materials (Chinese)"
+      },
+      "finishes": {
+        "english": "Finishes (English)",
+        "chinese": "Finishes (Chinese)",
+        "placeholder": "Select finishes",
+        "placeholderChinese": "Select finishes (Chinese)"
+      },
+      "attributes": {
+        "english": "Additional Attributes (English)",
+        "chinese": "Additional Attributes (Chinese)",
+        "placeholder": "Select attributes",
+        "placeholderChinese": "Select attributes (Chinese)"
+      },
+      "otherAttributes": {
+        "title": "Other Attributes",
+        "add": "Add",
+        "key": "Key",
+        "value": "Value",
+        "none": "No other attributes added yet."
+      }
+    },
+    "specifications": {
+      "dimensions": "Dimensions",
+      "width": "Width",
+      "length": "Length",
+      "height": "Height",
+      "cm": "cm",
+      "otherSpecs": "Other Specifications",
+      "warranty": "Warranty",
+      "years": "years",
+      "leadTime": "Lead Time",
+      "days": "days",
+      "allAttributes": "All Attributes",
+      "feature": "Feature"
+    },
+    "customizations": {
+      "title": "Product Customizations",
+      "add": "Add Customization",
+      "name": "Customization Name",
+      "options": "Options",
+      "addOption": "Add Option",
+      "none": "No customization options available for this product."
+    },
+    "actions": {
+      "fineTune": "Fine Tune",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "close": "Close",
+      "discardChanges": "Discard changes?"
+    }
   },
   "tabs": {
     "fileBrowser": "Data Source",
