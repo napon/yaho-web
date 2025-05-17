@@ -841,7 +841,7 @@ export function ProductDialog({
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <Label>
-                          {t("productDialog.details.otherAttributes")}
+                          {t("productDialog.details.otherAttributes.title")}
                         </Label>
                         <Button
                           type="button"
@@ -1075,7 +1075,7 @@ export function ProductDialog({
                               </div>
 
                               <div className="grid grid-cols-1 gap-2">
-                                {customization.options.map(
+                                {(customization.options || []).map(
                                   (option, optionIndex) => (
                                     <div
                                       key={optionIndex}
@@ -1150,7 +1150,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            {t("productDialog.details.colors")}
+                            {t("productDialog.details.colors.title")}
                           </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {(isChinese
@@ -1166,7 +1166,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            {t("productDialog.details.materials")}
+                            {t("productDialog.details.materials.title")}
                           </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {(isChinese
@@ -1182,7 +1182,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            {t("productDialog.details.finishes")}
+                            {t("productDialog.details.finishes.title")}
                           </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {(isChinese
@@ -1198,7 +1198,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            {t("productDialog.details.additionalAttributes")}
+                            {t("productDialog.details.attributes.title")}
                           </h3>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {(isChinese
@@ -1216,7 +1216,7 @@ export function ProductDialog({
 
                         <div>
                           <h3 className="text-sm font-medium">
-                            {t("productDialog.details.otherAttributes")}
+                            {t("productDialog.details.otherAttributes.title")}
                           </h3>
                           <div className="space-y-1 mt-1">
                             {(currentProduct.other_attributes || []).map(

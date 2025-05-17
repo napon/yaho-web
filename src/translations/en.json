@@ -60,24 +60,28 @@
       "addResource": "Add",
       "enterResourceUrl": "Enter resource URL",
       "colors": {
+        "title": "Colors",
         "english": "Colors (English)",
         "chinese": "Colors (Chinese)",
         "placeholder": "Select colors",
         "placeholderChinese": "Select colors (Chinese)"
       },
       "materials": {
+        "title": "Materials",
         "english": "Materials (English)",
         "chinese": "Materials (Chinese)",
         "placeholder": "Select materials",
         "placeholderChinese": "Select materials (Chinese)"
       },
       "finishes": {
+        "title": "Finishes",
         "english": "Finishes (English)",
         "chinese": "Finishes (Chinese)",
         "placeholder": "Select finishes",
         "placeholderChinese": "Select finishes (Chinese)"
       },
       "attributes": {
+        "title": "Additional Attributes",
         "english": "Additional Attributes (English)",
         "chinese": "Additional Attributes (Chinese)",
         "placeholder": "Select attributes",

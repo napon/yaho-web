@@ -128,24 +128,28 @@
       "addResource": "添加",
       "enterResourceUrl": "输入资源链接",
       "colors": {
+        "title": "颜色",
         "english": "颜色（英文）",
         "chinese": "颜色（中文）",
         "placeholder": "选择颜色",
         "placeholderChinese": "选择颜色（中文）"
       },
       "materials": {
+        "title": "材质",
         "english": "材质（英文）",
         "chinese": "材质（中文）",
         "placeholder": "选择材质",
         "placeholderChinese": "选择材质（中文）"
       },
       "finishes": {
+        "title": "表面处理",
         "english": "表面处理（英文）",
         "chinese": "表面处理（中文）",
         "placeholder": "选择表面处理",
         "placeholderChinese": "选择表面处理（中文）"
       },
       "attributes": {
+        "title": "其他属性",
         "english": "其他属性（英文）",
         "chinese": "其他属性（中文）",
         "placeholder": "选择属性",
