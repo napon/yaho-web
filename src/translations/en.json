@@ -1,0 +1,102 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "language": "Language"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "serverError": "Server error occurred"
+  },
+  "success": {
+    "saved": "Successfully saved",
+    "updated": "Successfully updated",
+    "deleted": "Successfully deleted"
+  },
+  "app": {
+    "title": "Yaho Product Search",
+    "description": "Search for products for YAHO TW"
+  },
+  "productCatalog": {
+    "title": "Product Catalog",
+    "description": "Enter a query to find relevant products",
+    "searchPlaceholder": "Enter a query and press ENTER to search",
+    "updateSuccess": "Product updated",
+    "updateSuccessMessage": "The update will be reflected in the catalog in a few minutes.",
+    "updateError": "Failed to update product"
+  },
+  "tabs": {
+    "fileBrowser": "Data Source",
+    "search": "AI Search"
+  },
+  "header": {
+    "userMenu": "User Menu"
+  },
+  "fileBrowser": {
+    "title": "Actions",
+    "upload": {
+      "button": "Upload {count} File(s)",
+      "noFiles": "No files selected",
+      "noFilesDescription": "Please select files to upload.",
+      "success": "Upload Successful",
+      "successDescription": "{count} file(s) uploaded.",
+      "error": "Upload Error",
+      "progress": "Upload Progress"
+    },
+    "folder": {
+      "create": {
+        "title": "Create New Folder",
+        "description": "Enter a name for your new folder in the current path: {path}.",
+        "placeholder": "Folder name (e.g., 'My Documents')",
+        "button": "Create Folder",
+        "cancel": "Cancel",
+        "invalidName": "Invalid Name",
+        "invalidNameDescription": "Folder name cannot be empty.",
+        "success": "Folder Created",
+        "successDescription": "Folder '{name}' was successfully created.",
+        "error": "Error Creating Folder"
+      },
+      "empty": {
+        "title": "This folder is empty.",
+        "icon": "Folder"
+      }
+    },
+    "navigation": {
+      "goToRoot": "Go to Root",
+      "goUp": "Go Up",
+      "currentFolder": "Current Folder: {name}",
+      "home": "Home"
+    },
+    "table": {
+      "name": "Name",
+      "size": "Size",
+      "lastModified": "Last Modified",
+      "loading": "Loading items..."
+    },
+    "actions": {
+      "viewDownload": "View/Download",
+      "openFolder": "Open Folder",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete {type} '{name}'?",
+      "deleteFolderWarning": " This will delete all its contents.",
+      "deleteSuccess": "Delete Successful",
+      "deleteSuccessDescription": "{type} '{name}' deleted.",
+      "deleteError": "Error Deleting {type}",
+      "viewError": "Error Viewing File"
+    },
+    "dataRefresh": {
+      "button": "Data Refresh",
+      "started": "Data Refresh Started",
+      "startedDescription": "This will take a couple of minutes",
+      "error": "Error Refreshing Data",
+      "errorDescription": "Please try again later",
+      "remaining": "Refresh remaining: ∞"
+    }
+  }
+}

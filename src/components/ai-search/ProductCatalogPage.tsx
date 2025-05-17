@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Spinner } from "../common/spinner";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ProductCatalog() {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,25 +77,20 @@ export default function ProductCatalog() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Product Catalog</CardTitle>
-          <CardDescription>
-            Enter a query to find relevant products
-          </CardDescription>
+          <CardTitle className="text-lg sm:text-xl">
+            {t("productCatalog.title")}
+          </CardTitle>
+          <CardDescription>{t("productCatalog.description")}</CardDescription>
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Enter a query and press ENTER to search"
+              placeholder={t("productCatalog.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setLoading(true);
                   fetchProducts(searchQuery);
-                }
-                if (e.key === "Escape") {
-                  toast("hello", {
-                    description: "world",
-                  });
                 }
               }}
               className="pl-10"

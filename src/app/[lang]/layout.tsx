@@ -1,15 +1,11 @@
 import { Toaster } from "@/components/ui/sonner";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TranslationProvider } from "./TranslationContext";
+import { getTranslations } from "./translations";
+import { zhTW, enUS } from "@clerk/localizations";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,20 +24,26 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ lang: "en" | "zh" }>;
 }>) {
+  const { lang } = await params;
+  const localeKey = lang === "en" ? enUS : zhTW;
+  const translatedStrings = await getTranslations(lang);
   return (
     <ClerkProvider
+      localization={localeKey}
       appearance={{
         elements: {
           footer: "hidden",
         },
       }}
     >
-      <html lang="en">
+      <html lang={lang}>
         <body
           className={`min-h-screen bg-background ${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -50,8 +52,10 @@ export default function RootLayout({
               <UserButton />
             </SignedIn>
           </header>
-          {children}
-          <Toaster />
+          <TranslationProvider translation={translatedStrings}>
+            {children}
+            <Toaster />
+          </TranslationProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -45,6 +45,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
+import { useTranslation } from "@/lib/i18n";
 
 interface FileItem {
   name: string;
@@ -55,6 +56,7 @@ interface FileItem {
 }
 
 const DrivePage: React.FC = () => {
+  const { t } = useTranslation();
   const [items, setItems] = useState<FileItem[]>([]);
   const [currentPath, setCurrentPath] = useState<string>(""); // e.g., 'folder1/subfolder2/'
   const [isLoading, setIsLoading] = useState(false);
@@ -111,8 +113,8 @@ const DrivePage: React.FC = () => {
 
   const handleUploadFiles = async () => {
     if (!selectedFilesForUpload || selectedFilesForUpload.length === 0) {
-      toast("No files selected", {
-        description: "Please select files to upload.",
+      toast(t("fileBrowser.upload.noFiles"), {
+        description: t("fileBrowser.upload.noFilesDescription"),
       });
       return;
     }
@@ -180,8 +182,10 @@ const DrivePage: React.FC = () => {
       });
       setUploadProgress(finalProgress);
 
-      toast("Upload Successful", {
-        description: `${result.uploadedFiles?.length || 0} file(s) uploaded.`,
+      toast(t("fileBrowser.upload.success"), {
+        description: t("fileBrowser.upload.successDescription", {
+          count: result.uploadedFiles?.length || 0,
+        }),
       });
       fetchItems(currentPath);
       setSelectedFilesForUpload(null);
@@ -208,8 +212,8 @@ const DrivePage: React.FC = () => {
 
   const handleCreateFolderSubmit = async () => {
     if (!newFolderName.trim()) {
-      toast("Invalid Name", {
-        description: "Folder name cannot be empty.",
+      toast(t("fileBrowser.folder.create.invalidName"), {
+        description: t("fileBrowser.folder.create.invalidNameDescription"),
       });
       return;
     }
@@ -227,8 +231,10 @@ const DrivePage: React.FC = () => {
       if (!response.ok) {
         throw new Error(result.error || "Failed to create folder");
       }
-      toast("Folder Created", {
-        description: `Folder '${newFolderName}' was successfully created.`,
+      toast(t("fileBrowser.folder.create.success"), {
+        description: t("fileBrowser.folder.create.successDescription", {
+          name: newFolderName,
+        }),
       });
       setShowCreateFolderDialog(false);
       setNewFolderName("");
@@ -244,8 +250,13 @@ const DrivePage: React.FC = () => {
 
   const handleDeleteItem = async (item: FileItem) => {
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${item.type} '${item.name}'?` +
-        (item.type === "folder" ? " This will delete all its contents." : "")
+      t("fileBrowser.actions.deleteConfirm", {
+        type: item.type,
+        name: item.name,
+      }) +
+        (item.type === "folder"
+          ? t("fileBrowser.actions.deleteFolderWarning")
+          : "")
     );
     if (!confirmDelete) return;
 
@@ -267,10 +278,11 @@ const DrivePage: React.FC = () => {
       if (!response.ok) {
         throw new Error(result.error || `Failed to delete ${item.type}`);
       }
-      toast("Delete Successful", {
-        description: `${
-          item.type.charAt(0).toUpperCase() + item.type.slice(1)
-        } '${item.name}' deleted.`,
+      toast(t("fileBrowser.actions.deleteSuccess"), {
+        description: t("fileBrowser.actions.deleteSuccessDescription", {
+          type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
+          name: item.name,
+        }),
       });
       fetchItems(currentPath);
     } catch (error: any) {
@@ -354,7 +366,7 @@ const DrivePage: React.FC = () => {
             size="icon"
             onClick={() => setCurrentPath("")}
             disabled={currentPath === "" || isLoading}
-            title="Go to Root"
+            title={t("fileBrowser.navigation.goToRoot")}
           >
             <Home className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
@@ -364,7 +376,7 @@ const DrivePage: React.FC = () => {
               size="icon"
               onClick={navigateUp}
               disabled={isLoading}
-              title="Go Up"
+              title={t("fileBrowser.navigation.goUp")}
             >
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
@@ -382,7 +394,9 @@ const DrivePage: React.FC = () => {
                   onClick={() => navigateToFolder(crumb.path)}
                   disabled={isLoading || crumb.path === currentPath}
                 >
-                  {crumb.name}
+                  {crumb.name === "Home"
+                    ? t("fileBrowser.navigation.home")
+                    : crumb.name}
                 </Button>
                 {index < arr.length - 1 && <span className="mx-1">/</span>}
               </span>
@@ -393,7 +407,9 @@ const DrivePage: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Actions</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">
+            {t("fileBrowser.title")}
+          </CardTitle>
           <div className="flex flex-col sm:flex-row gap-2 pt-4">
             <div className="flex-grow sm:max-w-xs">
               <Input
@@ -421,7 +437,9 @@ const DrivePage: React.FC = () => {
               ) : (
                 <UploadCloud className="mr-2 h-4 w-4" />
               )}
-              Upload {selectedFilesForUpload?.length || 0} File(s)
+              {t("fileBrowser.upload.button", {
+                count: selectedFilesForUpload?.length || 0,
+              })}
             </Button>
             <Button
               variant="outline"
@@ -429,7 +447,8 @@ const DrivePage: React.FC = () => {
               disabled={isUploading || isLoading}
               className="w-full sm:w-auto"
             >
-              <FolderPlus className="mr-2 h-4 w-4" /> Create Folder
+              <FolderPlus className="mr-2 h-4 w-4" />{" "}
+              {t("fileBrowser.folder.create.button")}
             </Button>
             {items?.length > 0 &&
               items.every((item) => item.type === "file") && (
@@ -449,20 +468,24 @@ const DrivePage: React.FC = () => {
                             path: path,
                           }),
                         });
-                        toast("Data Refresh Started", {
-                          description: "This will take a couple of minutes",
+                        toast(t("fileBrowser.dataRefresh.started"), {
+                          description: t(
+                            "fileBrowser.dataRefresh.startedDescription"
+                          ),
                         });
                       } catch (error) {
-                        toast("Error Refreshing Data", {
-                          description: "Please try again later",
+                        toast(t("fileBrowser.dataRefresh.error"), {
+                          description: t(
+                            "fileBrowser.dataRefresh.errorDescription"
+                          ),
                         });
                       }
                     }}
                   >
-                    <RefreshCw /> Data Refresh
+                    <RefreshCw /> {t("fileBrowser.dataRefresh.button")}
                   </Button>
                   <Label className="mt-2 text-xs text-muted-foreground">
-                    Refresh remaining: ∞
+                    {t("fileBrowser.dataRefresh.remaining")}
                   </Label>
                 </div>
               )}
@@ -474,7 +497,7 @@ const DrivePage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-md sm:text-lg">
-              Upload Progress
+              {t("fileBrowser.upload.progress")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 pt-2">
@@ -504,27 +527,29 @@ const DrivePage: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl">
-            Current Folder:{" "}
-            {currentPath === ""
-              ? "Home"
-              : currentPath
-                  .split("/")
-                  .filter((p) => p)
-                  .pop()}
+            {t("fileBrowser.navigation.currentFolder", {
+              name:
+                currentPath === ""
+                  ? t("fileBrowser.navigation.home")
+                  : currentPath
+                      .split("/")
+                      .filter((p) => p)
+                      .pop() || "",
+            })}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {isLoading && (
             <div className="flex items-center justify-center h-40">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="ml-2">Loading items...</p>
+              <p className="ml-2">{t("fileBrowser.table.loading")}</p>
             </div>
           )}
 
           {!isLoading && items.length === 0 && (
             <div className="text-center py-10 text-muted-foreground">
               <FolderIcon className="mx-auto h-12 w-12 mb-2" />
-              <p>This folder is empty.</p>
+              <p>{t("fileBrowser.folder.empty.title")}</p>
             </div>
           )}
 
@@ -534,10 +559,12 @@ const DrivePage: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px] sm:w-[50px]"></TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="hidden sm:table-cell">Size</TableHead>
+                    <TableHead>{t("fileBrowser.table.name")}</TableHead>
+                    <TableHead className="hidden sm:table-cell">
+                      {t("fileBrowser.table.size")}
+                    </TableHead>
                     <TableHead className="hidden md:table-cell">
-                      Last Modified
+                      {t("fileBrowser.table.lastModified")}
                     </TableHead>
                     <TableHead className="text-right w-[60px] sm:w-[80px]"></TableHead>
                   </TableRow>
@@ -590,8 +617,8 @@ const DrivePage: React.FC = () => {
                                 onClick={() => handleViewFile(item.fullPath)}
                                 disabled={isLoading}
                               >
-                                <ExternalLink className="mr-2 h-4 w-4" />{" "}
-                                View/Download
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                {t("fileBrowser.actions.viewDownload")}
                               </DropdownMenuItem>
                             )}
                             {item.type === "folder" && (
@@ -599,8 +626,8 @@ const DrivePage: React.FC = () => {
                                 onClick={() => navigateToFolder(item.fullPath)}
                                 disabled={isLoading}
                               >
-                                <FolderIcon className="mr-2 h-4 w-4" /> Open
-                                Folder
+                                <FolderIcon className="mr-2 h-4 w-4" />
+                                {t("fileBrowser.actions.openFolder")}
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -609,7 +636,8 @@ const DrivePage: React.FC = () => {
                               className="text-red-600 focus:text-red-600 focus:bg-red-50"
                               disabled={isLoading}
                             >
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {t("fileBrowser.actions.delete")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -629,16 +657,17 @@ const DrivePage: React.FC = () => {
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Create New Folder</DialogTitle>
+            <DialogTitle>{t("fileBrowser.folder.create.title")}</DialogTitle>
             <DialogDescription>
-              Enter a name for your new folder in the current path:{" "}
-              {currentPath || "Root"}.
+              {t("fileBrowser.folder.create.description", {
+                path: currentPath || t("fileBrowser.navigation.home"),
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <Input
               id="new-folder-name"
-              placeholder="Folder name (e.g., 'My Documents')"
+              placeholder={t("fileBrowser.folder.create.placeholder")}
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
               disabled={isLoading}
@@ -653,7 +682,7 @@ const DrivePage: React.FC = () => {
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline" disabled={isLoading}>
-                Cancel
+                {t("fileBrowser.folder.create.cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -663,7 +692,7 @@ const DrivePage: React.FC = () => {
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              Create Folder
+              {t("fileBrowser.folder.create.button")}
             </Button>
           </DialogFooter>
         </DialogContent>
