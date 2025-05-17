@@ -1,35 +1,28 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import DirectoryUpload from "@/components/directory-upload"
-import ProductListing from "@/components/product-listing"
-import SearchProducts from "@/components/search-products"
-import { ProductProvider } from "@/components/product-context"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProductCatalog from "@/components/ai-search/ProductCatalogPage";
+import DrivePage from "@/components/file-browser/FileBrowsePage";
 
 export default function Home() {
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">Product Management System</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        Yaho Product Management System
+      </h1>
 
-      <ProductProvider>
-        <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="upload">Directory Upload</TabsTrigger>
-            <TabsTrigger value="products">Product Listing</TabsTrigger>
-            <TabsTrigger value="search">Search Products</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="search" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="file-browser">Data Source</TabsTrigger>
+          <TabsTrigger value="search">AI Search</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="upload" className="mt-6">
-            <DirectoryUpload />
-          </TabsContent>
+        <TabsContent value="file-browser" className="mt-6">
+          <DrivePage />
+        </TabsContent>
 
-          <TabsContent value="products" className="mt-6">
-            <ProductListing />
-          </TabsContent>
-
-          <TabsContent value="search" className="mt-6">
-            <SearchProducts />
-          </TabsContent>
-        </Tabs>
-      </ProductProvider>
+        <TabsContent value="search" className="mt-6">
+          <ProductCatalog />
+        </TabsContent>
+      </Tabs>
     </div>
-  )
+  );
 }

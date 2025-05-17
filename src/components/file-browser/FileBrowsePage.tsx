@@ -1,0 +1,675 @@
+"use client";
+
+import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Folder as FolderIcon,
+  File as FileIcon,
+  Trash2,
+  MoreVertical,
+  UploadCloud,
+  FolderPlus,
+  Home,
+  ArrowLeft,
+  ExternalLink,
+  Loader2, // Spinner icon
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
+import { Label } from "@radix-ui/react-label";
+
+interface FileItem {
+  name: string;
+  fullPath: string;
+  size?: number;
+  updated?: string;
+  type: "file" | "folder";
+}
+
+const DrivePage: React.FC = () => {
+  const [items, setItems] = useState<FileItem[]>([]);
+  const [currentPath, setCurrentPath] = useState<string>(""); // e.g., 'folder1/subfolder2/'
+  const [isLoading, setIsLoading] = useState(false);
+  const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [selectedFilesForUpload, setSelectedFilesForUpload] =
+    useState<FileList | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<
+    Record<string, { progress: number; error?: string }>
+  >({});
+  const [isUploading, setIsUploading] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const fetchItems = useCallback(async (path: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/files/list?prefix=${encodeURIComponent(path)}`
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to fetch items");
+      }
+      const data = await response.json();
+      const combinedItems: FileItem[] = [
+        ...(data.subdirectories || []).sort((a: FileItem, b: FileItem) =>
+          a.name.localeCompare(b.name)
+        ),
+        ...(data.files || []).sort((a: FileItem, b: FileItem) =>
+          a.name.localeCompare(b.name)
+        ),
+      ];
+      setItems(combinedItems);
+    } catch (error: any) {
+      toast("Error Fetching Data", {
+        description: error.message,
+      });
+      setItems([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchItems(currentPath);
+  }, [currentPath, fetchItems]);
+
+  const handleFileSelectionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSelectedFilesForUpload(event.target.files);
+  };
+
+  const handleUploadFiles = async () => {
+    if (!selectedFilesForUpload || selectedFilesForUpload.length === 0) {
+      toast("No files selected", {
+        description: "Please select files to upload.",
+      });
+      return;
+    }
+    setIsUploading(true);
+    const initialProgress: Record<
+      string,
+      { progress: number; error?: string }
+    > = {};
+    Array.from(selectedFilesForUpload).forEach((file) => {
+      initialProgress[file.name] = { progress: 0 };
+    });
+    setUploadProgress(initialProgress);
+
+    const formData = new FormData();
+    for (let i = 0; i < selectedFilesForUpload.length; i++) {
+      formData.append("files", selectedFilesForUpload[i]);
+    }
+    formData.append("prefix", currentPath);
+
+    // Simulate progress updates. For real progress, this needs a more complex setup
+    // (e.g., server-sent events or client-side SDK for direct GCS upload with progress).
+    // This is a simplified client-side simulation.
+    Array.from(selectedFilesForUpload).forEach((file) => {
+      let currentFileProgress = 0;
+      const interval = setInterval(() => {
+        currentFileProgress += 10;
+        if (currentFileProgress <= 90) {
+          // Stop at 90 to wait for actual server response
+          setUploadProgress((prev) => ({
+            ...prev,
+            [file.name]: { ...prev[file.name], progress: currentFileProgress },
+          }));
+        } else {
+          clearInterval(interval);
+        }
+      }, 200);
+    });
+
+    try {
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      // Update progress to 100% for successful uploads
+      const finalProgress = { ...initialProgress };
+      (result.uploadedFiles || []).forEach((uploadedFile: { name: string }) => {
+        finalProgress[uploadedFile.name] = { progress: 100 };
+      });
+      // For files that might have failed if server doesn't list them or if error was general
+      Array.from(selectedFilesForUpload).forEach((file) => {
+        if (
+          !finalProgress[file.name] ||
+          finalProgress[file.name].progress < 100
+        ) {
+          if (response.ok) finalProgress[file.name] = { progress: 100 }; // Assume success if overall response ok
+          // else error handled by catch block
+        }
+      });
+      setUploadProgress(finalProgress);
+
+      toast("Upload Successful", {
+        description: `${result.uploadedFiles?.length || 0} file(s) uploaded.`,
+      });
+      fetchItems(currentPath);
+      setSelectedFilesForUpload(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear file input
+      }
+      setTimeout(() => setUploadProgress({}), 3000); // Clear progress indicators after a delay
+    } catch (error: any) {
+      toast("Upload Error", {
+        description: error.message,
+      });
+      const errorProgress = { ...initialProgress };
+      Array.from(selectedFilesForUpload).forEach((file) => {
+        errorProgress[file.name] = {
+          progress: errorProgress[file.name]?.progress || 0,
+          error: error.message || "Failed",
+        };
+      });
+      setUploadProgress(errorProgress);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleCreateFolderSubmit = async () => {
+    if (!newFolderName.trim()) {
+      toast("Invalid Name", {
+        description: "Folder name cannot be empty.",
+      });
+      return;
+    }
+    setIsLoading(true); // Use main loader for this action
+    try {
+      const response = await fetch("/api/folders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          folderName: newFolderName,
+          prefix: currentPath,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create folder");
+      }
+      toast("Folder Created", {
+        description: `Folder '${newFolderName}' was successfully created.`,
+      });
+      setShowCreateFolderDialog(false);
+      setNewFolderName("");
+      fetchItems(currentPath);
+    } catch (error: any) {
+      toast("Error Creating Folder", {
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteItem = async (item: FileItem) => {
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${item.type} '${item.name}'?` +
+        (item.type === "folder" ? " This will delete all its contents." : "")
+    );
+    if (!confirmDelete) return;
+
+    setIsLoading(true);
+    const endpoint =
+      item.type === "folder" ? "/api/folders/delete" : "/api/files/delete";
+    const body =
+      item.type === "folder"
+        ? { folderPath: item.fullPath }
+        : { filePath: item.fullPath };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || `Failed to delete ${item.type}`);
+      }
+      toast("Delete Successful", {
+        description: `${
+          item.type.charAt(0).toUpperCase() + item.type.slice(1)
+        } '${item.name}' deleted.`,
+      });
+      fetchItems(currentPath);
+    } catch (error: any) {
+      toast(`Error Deleting ${item.type}`, {
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleViewFile = async (filePath: string) => {
+    // Add a temporary loading state for this specific action if desired
+    try {
+      const response = await fetch(
+        `/api/files/view?filePath=${encodeURIComponent(filePath)}`
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to get view link");
+      }
+      window.open(result.viewUrl, "_blank", "noopener,noreferrer");
+    } catch (error: any) {
+      toast("Error Viewing File", {
+        description: error.message,
+      });
+    }
+  };
+
+  const navigateToFolder = (folderPath: string) => {
+    setCurrentPath(folderPath);
+  };
+
+  const navigateUp = () => {
+    if (currentPath === "") return;
+    const parts = currentPath.split("/").filter((p) => p);
+    parts.pop();
+    setCurrentPath(parts.length > 0 ? parts.join("/") + "/" : "");
+  };
+
+  const getBreadcrumbs = () => {
+    const pathParts = currentPath.split("/").filter((p) => p);
+    const crumbs = [{ name: "Home", path: "" }];
+    let currentCrumbPath = "";
+    for (const part of pathParts) {
+      currentCrumbPath += `${part}/`;
+      crumbs.push({ name: part, path: currentCrumbPath });
+    }
+    return crumbs;
+  };
+
+  const formatSize = (bytes?: number) => {
+    if (bytes === undefined || bytes === null || bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "--";
+    try {
+      return new Date(dateString).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      return "--";
+    }
+  };
+
+  return (
+    <div className="container mx-auto space-y-6">
+      <header className="mb-2">
+        <div className="flex items-center space-x-1 sm:space-x-2 mt-3 text-sm sm:text-base overflow-x-auto whitespace-nowrap py-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCurrentPath("")}
+            disabled={currentPath === "" || isLoading}
+            title="Go to Root"
+          >
+            <Home className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+          {currentPath !== "" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={navigateUp}
+              disabled={isLoading}
+              title="Go Up"
+            >
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
+          )}
+          <div className="flex items-center text-muted-foreground">
+            {getBreadcrumbs().map((crumb, index, arr) => (
+              <span key={crumb.path} className="flex items-center">
+                <Button
+                  variant="link"
+                  className={`p-1 h-auto text-sm sm:text-base ${
+                    crumb.path === currentPath
+                      ? "font-semibold text-primary"
+                      : "text-muted-foreground hover:text-primary"
+                  }`}
+                  onClick={() => navigateToFolder(crumb.path)}
+                  disabled={isLoading || crumb.path === currentPath}
+                >
+                  {crumb.name}
+                </Button>
+                {index < arr.length - 1 && <span className="mx-1">/</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg sm:text-xl">Actions</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-2 pt-4">
+            <div className="flex-grow sm:max-w-xs">
+              <Input
+                id="file-upload-input"
+                type="file"
+                multiple
+                onChange={handleFileSelectionChange}
+                ref={fileInputRef}
+                className="w-full"
+                disabled={isUploading || isLoading}
+              />
+            </div>
+            <Button
+              onClick={handleUploadFiles}
+              disabled={
+                !selectedFilesForUpload ||
+                selectedFilesForUpload.length === 0 ||
+                isUploading ||
+                isLoading
+              }
+              className="w-full sm:w-auto"
+            >
+              {isUploading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <UploadCloud className="mr-2 h-4 w-4" />
+              )}
+              Upload {selectedFilesForUpload?.length || 0} File(s)
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateFolderDialog(true)}
+              disabled={isUploading || isLoading}
+              className="w-full sm:w-auto"
+            >
+              <FolderPlus className="mr-2 h-4 w-4" /> Create Folder
+            </Button>
+            {items?.length > 0 &&
+              items.every((item) => item.type === "file") && (
+                <div className="ml-auto flex flex-col items-center">
+                  <Button
+                    className="cursor-pointer bg-amber-500 shadow-md hover:bg-amber-400"
+                    variant="secondary"
+                    onClick={async () => {
+                      try {
+                        let path = currentPath;
+                        if (path.length > 1 && path.endsWith("/")) {
+                          path = path.slice(0, -1);
+                        }
+                        await fetch("/api/data/new", {
+                          method: "POST",
+                          body: JSON.stringify({
+                            path: path,
+                          }),
+                        });
+                        toast("Data Refresh Started", {
+                          description: "This will take a couple of minutes",
+                        });
+                      } catch (error) {
+                        toast("Error Refreshing Data", {
+                          description: "Please try again later",
+                        });
+                      }
+                    }}
+                  >
+                    <RefreshCw /> Data Refresh
+                  </Button>
+                  <Label className="mt-2 text-xs text-muted-foreground">
+                    Refresh remaining: ∞
+                  </Label>
+                </div>
+              )}
+          </div>
+        </CardHeader>
+      </Card>
+
+      {isUploading && Object.keys(uploadProgress).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-md sm:text-lg">
+              Upload Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 pt-2">
+            {Object.entries(uploadProgress).map(([fileName, status]) => (
+              <div key={fileName} className="text-sm">
+                <div className="flex justify-between items-center mb-1">
+                  <span>{fileName}</span>
+                  {status.error && (
+                    <AlertCircle className="h-4 w-4 text-red-500" />
+                  )}
+                </div>
+                <Progress
+                  value={status.progress}
+                  className={`w-full h-2 ${
+                    status.error ? "bg-red-200 [&>*]:bg-red-600" : ""
+                  }`}
+                />
+                {status.error && (
+                  <p className="text-xs text-red-600 mt-1">{status.error}</p>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg sm:text-xl">
+            Current Folder:{" "}
+            {currentPath === ""
+              ? "Home"
+              : currentPath
+                  .split("/")
+                  .filter((p) => p)
+                  .pop()}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {isLoading && (
+            <div className="flex items-center justify-center h-40">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="ml-2">Loading items...</p>
+            </div>
+          )}
+
+          {!isLoading && items.length === 0 && (
+            <div className="text-center py-10 text-muted-foreground">
+              <FolderIcon className="mx-auto h-12 w-12 mb-2" />
+              <p>This folder is empty.</p>
+            </div>
+          )}
+
+          {!isLoading && items.length > 0 && (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[40px] sm:w-[50px]"></TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="hidden sm:table-cell">Size</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Last Modified
+                    </TableHead>
+                    <TableHead className="text-right w-[60px] sm:w-[80px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {items.map((item) => (
+                    <TableRow
+                      key={item.fullPath}
+                      className="group hover:bg-muted/50"
+                    >
+                      <TableCell className="mx-auto">
+                        {item.type === "folder" ? (
+                          <FolderIcon className="h-5 w-5 ml-2 text-blue-500" />
+                        ) : (
+                          <FileIcon className="h-5 w-5 ml-2 text-gray-500" />
+                        )}
+                      </TableCell>
+                      <TableCell
+                        className="font-medium cursor-pointer hover:underline max-w-[150px] sm:max-w-[250px] md:max-w-xs lg:max-w-md truncate"
+                        title={item.name}
+                        onClick={() =>
+                          item.type === "folder"
+                            ? navigateToFolder(item.fullPath)
+                            : handleViewFile(item.fullPath)
+                        }
+                      >
+                        {item.name}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                        {item.type === "file" ? formatSize(item.size) : "--"}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                        {formatDate(item.updated)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={isLoading}
+                              className="cursor-pointer"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {item.type === "file" && (
+                              <DropdownMenuItem
+                                onClick={() => handleViewFile(item.fullPath)}
+                                disabled={isLoading}
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4" />{" "}
+                                View/Download
+                              </DropdownMenuItem>
+                            )}
+                            {item.type === "folder" && (
+                              <DropdownMenuItem
+                                onClick={() => navigateToFolder(item.fullPath)}
+                                disabled={isLoading}
+                              >
+                                <FolderIcon className="mr-2 h-4 w-4" /> Open
+                                Folder
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteItem(item)}
+                              className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                              disabled={isLoading}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog
+        open={showCreateFolderDialog}
+        onOpenChange={setShowCreateFolderDialog}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Folder</DialogTitle>
+            <DialogDescription>
+              Enter a name for your new folder in the current path:{" "}
+              {currentPath || "Root"}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              id="new-folder-name"
+              placeholder="Folder name (e.g., 'My Documents')"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              disabled={isLoading}
+              onKeyDown={(e) =>
+                e.key === "Enter" &&
+                !isLoading &&
+                newFolderName.trim() &&
+                handleCreateFolderSubmit()
+              }
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" disabled={isLoading}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleCreateFolderSubmit}
+              disabled={isLoading || !newFolderName.trim()}
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              Create Folder
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default DrivePage;
