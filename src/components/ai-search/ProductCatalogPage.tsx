@@ -45,7 +45,9 @@ export default function ProductCatalog() {
   const handleSaveProduct = async (updatedProduct: Product) => {
     // Update the product in the products array
     const updatedProducts = products.map((p) =>
-      p.product_id === updatedProduct.product_id ? updatedProduct : p
+      p.id === updatedProduct.id && p.itemIndex === updatedProduct.itemIndex
+        ? updatedProduct
+        : p
     );
 
     setProducts(updatedProducts);
@@ -110,7 +112,7 @@ export default function ProductCatalog() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (
               <ProductCard
-                key={`${product.product_id}-${product.name}`}
+                key={`${product.id}-${product.itemIndex}`}
                 product={product}
                 onClick={() => handleProductClick(product)}
               />

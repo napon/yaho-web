@@ -38,7 +38,9 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
       />
       <CardContent className="p-4">
         <h3 className="font-semibold text-lg line-clamp-1">{product.name}</h3>
-        <p className="text-sm text-muted-foreground mb-2">{product.brand}</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          {product.brand} {product.product_id || ""}
+        </p>
 
         {materials && materials.length > 0 && (
           <div className="flex items-start gap-1 mt-2">

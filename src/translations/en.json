@@ -115,7 +115,8 @@
       "name": "Customization Name",
       "options": "Options",
       "addOption": "Add Option",
-      "none": "No customization options available for this product."
+      "none": "No customization options available for this product.",
+      "addOptionPrompt": "Enter option value"
     },
     "actions": {
       "fineTune": "Fine Tune",
@@ -124,6 +125,9 @@
       "saving": "Saving...",
       "close": "Close",
       "discardChanges": "Discard changes?"
+    },
+    "errors": {
+      "saveError": "Error saving product"
     }
   },
   "tabs": {

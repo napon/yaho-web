@@ -11,8 +11,8 @@
     "language": "語言"
   },
   "errors": {
-    "required": "此欄位為必填項",
-    "invalidEmail": "無效的電子郵件地址",
+    "required": "此欄位為必填",
+    "invalidEmail": "電子郵件地址無效",
     "serverError": "伺服器錯誤"
   },
   "success": {
@@ -22,14 +22,14 @@
   },
   "app": {
     "title": "Yaho 產品搜尋",
-    "description": "搜尋 YAHO TW 的產品"
+    "description": "搜尋 Yaho 的產品"
   },
   "productCatalog": {
     "title": "產品目錄",
-    "description": "輸入查詢以查找相關產品",
-    "searchPlaceholder": "輸入查詢並按 Enter 鍵搜尋",
+    "description": "查詢相關產品",
+    "searchPlaceholder": "輸入並按 Enter 鍵搜尋",
     "updateSuccess": "產品已更新",
-    "updateSuccessMessage": "更新將在幾分鐘內反映在目錄中。",
+    "updateSuccessMessage": "更新將在幾分鐘內反映在目錄中",
     "updateError": "更新產品失敗"
   },
   "productCard": {
@@ -55,10 +55,10 @@
       "error": "上傳錯誤",
       "progress": "上傳進度",
       "sizeLimitExceededTitle": "檔案大小超出限制",
-      "sizeLimitExceededDescription": "所選檔案（{currentSize}）超過總限制 {limit}。",
+      "sizeLimitExceededDescription": "所選檔案（{{currentSize}}）超過總限制 {{limit}}。",
       "cannotUploadSizeLimitTitle": "上傳遭封鎖",
-      "sizeLimitExceededAgain": "無法上傳。檔案總大小（{currentSize}）超過限制 {limit}。",
-      "selectedSize": "已選擇：{currentSize} / {limit}"
+      "sizeLimitExceededAgain": "無法上傳。檔案總大小（{{currentSize}}）超過限制 {{limit}}。",
+      "selectedSize": "已選擇：{{currentSize}} / {{limit}}"
     },
     "folder": {
       "create": {
@@ -67,14 +67,14 @@
         "placeholder": "資料夾名稱（例如：「我的文件」）",
         "button": "建立資料夾",
         "cancel": "取消",
-        "invalidName": "無效的名稱",
-        "invalidNameDescription": "資料夾名稱不能為空。",
+        "invalidName": "名稱無效",
+        "invalidNameDescription": "資料夾名稱不能為空",
         "success": "資料夾已建立",
-        "successDescription": "資料夾「{name}」已成功建立。",
+        "successDescription": "資料夾「{name}」已成功建立",
         "error": "建立資料夾時發生錯誤"
       },
       "empty": {
-        "title": "此資料夾為空。",
+        "title": "此資料夾為空",
         "icon": "資料夾"
       }
     },
@@ -95,9 +95,9 @@
       "openFolder": "開啟資料夾",
       "delete": "刪除",
       "deleteConfirm": "確定要刪除{type}「{name}」嗎？",
-      "deleteFolderWarning": "這將刪除其所有內容。",
+      "deleteFolderWarning": "這將刪除其所有內容",
       "deleteSuccess": "刪除成功",
-      "deleteSuccessDescription": "{type}「{name}」已刪除。",
+      "deleteSuccessDescription": "{type}「{name}」已刪除",
       "deleteError": "刪除{type}時發生錯誤",
       "viewError": "檢視檔案時發生錯誤"
     },
@@ -125,11 +125,11 @@
       "currency": "貨幣",
       "priceNTD": "價格（新臺幣）",
       "images": "圖片",
-      "noImages": "尚未新增圖片。",
+      "noImages": "尚未新增圖片",
       "addImage": "新增",
       "enterImageUrl": "輸入圖片連結",
       "resources": "資源",
-      "noResources": "尚未新增資源。",
+      "noResources": "尚未新增資源",
       "addResource": "新增",
       "enterResourceUrl": "輸入資源連結",
       "colors": {
@@ -165,7 +165,7 @@
         "add": "新增",
         "key": "鍵",
         "value": "值",
-        "none": "尚未新增其他屬性。"
+        "none": "尚未新增其他屬性"
       }
     },
     "specifications": {
@@ -188,7 +188,8 @@
       "name": "自訂名稱",
       "options": "選項",
       "addOption": "新增選項",
-      "none": "此產品暫無可用自訂選項。"
+      "none": "此產品暫無可用自訂選項",
+      "addOptionPrompt": "輸入選項值"
     },
     "actions": {
       "fineTune": "微調",
@@ -197,6 +198,9 @@
       "saving": "儲存中...",
       "close": "關閉",
       "discardChanges": "放棄變更？"
+    },
+    "errors": {
+      "saveError": "儲存產品時發生錯誤"
     }
   }
 }

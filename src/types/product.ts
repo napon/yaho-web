@@ -12,6 +12,8 @@ export interface ProductSearchResult {
   };
 }
 export interface Product {
+  id: string;
+  itemIndex: number;
   product_id: string;
   name?: string;
   description?: string;
