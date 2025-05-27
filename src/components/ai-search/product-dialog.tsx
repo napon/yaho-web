@@ -1235,7 +1235,7 @@ export function ProductDialog({
                     </div>
 
                     {(currentProduct.resource_urls || []).length > 0 && (
-                      <div>
+                      <div className="mt-8">
                         <h3 className="text-sm font-medium mb-2">
                           {t("productDialog.details.resources")}
                         </h3>
@@ -1247,10 +1247,11 @@ export function ProductDialog({
                                   href={resource}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-primary hover:underline"
+                                  className="hover:underline text-slate-500"
                                 >
-                                  {t("productDialog.details.resource")}{" "}
-                                  {index + 1}
+                                  {resource}
+                                  {/* {t("productDialog.details.resource")}{" "}
+                                  {index + 1} */}
                                 </a>
                               </div>
                             )

@@ -1,197 +1,202 @@
 {
   "lang": "zh",
   "common": {
-    "welcome": "欢迎",
-    "home": "首页",
-    "about": "关于",
-    "contact": "联系",
-    "login": "登录",
-    "logout": "退出",
-    "signup": "注册",
-    "language": "语言"
+    "welcome": "歡迎",
+    "home": "首頁",
+    "about": "關於",
+    "contact": "聯繫",
+    "login": "登入",
+    "logout": "登出",
+    "signup": "註冊",
+    "language": "語言"
   },
   "errors": {
-    "required": "此字段为必填项",
-    "invalidEmail": "无效的电子邮件地址",
-    "serverError": "服务器错误"
+    "required": "此欄位為必填項",
+    "invalidEmail": "無效的電子郵件地址",
+    "serverError": "伺服器錯誤"
   },
   "success": {
-    "saved": "保存成功",
+    "saved": "儲存成功",
     "updated": "更新成功",
-    "deleted": "删除成功"
+    "deleted": "刪除成功"
   },
   "app": {
-    "title": "Yaho 产品搜索",
-    "description": "搜索 YAHO TW 的产品"
+    "title": "Yaho 產品搜尋",
+    "description": "搜尋 YAHO TW 的產品"
   },
   "productCatalog": {
-    "title": "产品目录",
-    "description": "输入查询以查找相关产品",
-    "searchPlaceholder": "输入查询并按回车键搜索",
-    "updateSuccess": "产品已更新",
-    "updateSuccessMessage": "更新将在几分钟内反映在目录中。",
-    "updateError": "更新产品失败"
+    "title": "產品目錄",
+    "description": "輸入查詢以查找相關產品",
+    "searchPlaceholder": "輸入查詢並按 Enter 鍵搜尋",
+    "updateSuccess": "產品已更新",
+    "updateSuccessMessage": "更新將在幾分鐘內反映在目錄中。",
+    "updateError": "更新產品失敗"
   },
   "productCard": {
-    "material": "材质",
-    "moreColors": "还有 {count} 个颜色",
-    "finishes": "{count} 种表面处理"
+    "material": "材質",
+    "moreColors": "還有 {count} 個顏色",
+    "finishes": "{count} 種表面處理"
   },
   "tabs": {
-    "fileBrowser": "数据源",
-    "search": "AI 搜索"
+    "fileBrowser": "資料來源",
+    "search": "AI 搜尋"
   },
   "header": {
-    "userMenu": "用户菜单"
+    "userMenu": "使用者選單"
   },
   "fileBrowser": {
     "title": "操作",
     "upload": {
-      "button": "上传 {count} 个文件",
-      "noFiles": "未选择文件",
-      "noFilesDescription": "请选择要上传的文件。",
-      "success": "上传成功",
-      "successDescription": "已上传 {count} 个文件。",
-      "error": "上传错误",
-      "progress": "上传进度"
+      "button": "上傳 {count} 個檔案",
+      "noFiles": "未選擇檔案",
+      "noFilesDescription": "請選擇要上傳的檔案。",
+      "success": "上傳成功",
+      "successDescription": "已上傳 {count} 個檔案。",
+      "error": "上傳錯誤",
+      "progress": "上傳進度",
+      "sizeLimitExceededTitle": "檔案大小超出限制",
+      "sizeLimitExceededDescription": "所選檔案（{currentSize}）超過總限制 {limit}。",
+      "cannotUploadSizeLimitTitle": "上傳遭封鎖",
+      "sizeLimitExceededAgain": "無法上傳。檔案總大小（{currentSize}）超過限制 {limit}。",
+      "selectedSize": "已選擇：{currentSize} / {limit}"
     },
     "folder": {
       "create": {
-        "title": "创建新文件夹",
-        "description": "在当前路径中输入新文件夹的名称：{path}。",
-        "placeholder": "文件夹名称（例如：'我的文档'）",
-        "button": "创建文件夹",
+        "title": "建立新資料夾",
+        "description": "在當前路徑中輸入新資料夾的名稱：{path}。",
+        "placeholder": "資料夾名稱（例如：「我的文件」）",
+        "button": "建立資料夾",
         "cancel": "取消",
-        "invalidName": "无效的名称",
-        "invalidNameDescription": "文件夹名称不能为空。",
-        "success": "文件夹已创建",
-        "successDescription": "文件夹 '{name}' 已成功创建。",
-        "error": "创建文件夹时出错"
+        "invalidName": "無效的名稱",
+        "invalidNameDescription": "資料夾名稱不能為空。",
+        "success": "資料夾已建立",
+        "successDescription": "資料夾「{name}」已成功建立。",
+        "error": "建立資料夾時發生錯誤"
       },
       "empty": {
-        "title": "此文件夹为空。",
-        "icon": "文件夹"
+        "title": "此資料夾為空。",
+        "icon": "資料夾"
       }
     },
     "navigation": {
-      "goToRoot": "返回根目录",
-      "goUp": "返回上级",
-      "currentFolder": "当前文件夹：{name}",
-      "home": "首页"
+      "goToRoot": "返回根目錄",
+      "goUp": "返回上層",
+      "currentFolder": "目前資料夾：{name}",
+      "home": "首頁"
     },
     "table": {
-      "name": "名称",
+      "name": "名稱",
       "size": "大小",
-      "lastModified": "最后修改",
-      "loading": "正在加载项目..."
+      "lastModified": "最後修改",
+      "loading": "正在載入項目..."
     },
     "actions": {
-      "viewDownload": "查看/下载",
-      "openFolder": "打开文件夹",
-      "delete": "删除",
-      "deleteConfirm": "确定要删除{type} '{name}'吗？",
-      "deleteFolderWarning": "这将删除其所有内容。",
-      "deleteSuccess": "删除成功",
-      "deleteSuccessDescription": "{type} '{name}' 已删除。",
-      "deleteError": "删除{type}时出错",
-      "viewError": "查看文件时出错"
+      "viewDownload": "檢視/下載",
+      "openFolder": "開啟資料夾",
+      "delete": "刪除",
+      "deleteConfirm": "確定要刪除{type}「{name}」嗎？",
+      "deleteFolderWarning": "這將刪除其所有內容。",
+      "deleteSuccess": "刪除成功",
+      "deleteSuccessDescription": "{type}「{name}」已刪除。",
+      "deleteError": "刪除{type}時發生錯誤",
+      "viewError": "檢視檔案時發生錯誤"
     },
     "dataRefresh": {
-      "button": "数据刷新",
-      "started": "数据刷新已开始",
-      "startedDescription": "这需要几分钟时间",
-      "error": "刷新数据时出错",
-      "errorDescription": "请稍后重试",
-      "remaining": "剩余刷新次数：∞"
+      "button": "資料刷新",
+      "started": "資料刷新已開始",
+      "startedDescription": "這需要幾分鐘時間",
+      "error": "刷新資料時發生錯誤",
+      "errorDescription": "請稍後再試",
+      "remaining": "剩餘刷新次數：∞"
     }
   },
   "productDialog": {
     "tabs": {
-      "details": "详情",
-      "specifications": "规格",
-      "customizations": "定制"
+      "details": "詳細資料",
+      "specifications": "規格",
+      "customizations": "自訂"
     },
     "details": {
-      "productName": "产品名称",
-      "productId": "产品编号",
+      "productName": "產品名稱",
+      "productId": "產品編號",
       "brand": "品牌",
       "description": "描述",
-      "originalPrice": "原价",
-      "currency": "货币",
-      "priceNTD": "价格 (新台币)",
-      "images": "图片",
-      "noImages": "尚未添加图片。",
-      "addImage": "添加",
-      "enterImageUrl": "输入图片链接",
-      "resources": "资源",
-      "noResources": "尚未添加资源。",
-      "addResource": "添加",
-      "enterResourceUrl": "输入资源链接",
+      "originalPrice": "原價",
+      "currency": "貨幣",
+      "priceNTD": "價格（新臺幣）",
+      "images": "圖片",
+      "noImages": "尚未新增圖片。",
+      "addImage": "新增",
+      "enterImageUrl": "輸入圖片連結",
+      "resources": "資源",
+      "noResources": "尚未新增資源。",
+      "addResource": "新增",
+      "enterResourceUrl": "輸入資源連結",
       "colors": {
-        "title": "颜色",
-        "english": "颜色（英文）",
-        "chinese": "颜色（中文）",
-        "placeholder": "选择颜色",
-        "placeholderChinese": "选择颜色（中文）"
+        "title": "顏色",
+        "english": "顏色（英文）",
+        "chinese": "顏色（中文）",
+        "placeholder": "選擇顏色",
+        "placeholderChinese": "選擇顏色（中文）"
       },
       "materials": {
-        "title": "材质",
-        "english": "材质（英文）",
-        "chinese": "材质（中文）",
-        "placeholder": "选择材质",
-        "placeholderChinese": "选择材质（中文）"
+        "title": "材質",
+        "english": "材質（英文）",
+        "chinese": "材質（中文）",
+        "placeholder": "選擇材質",
+        "placeholderChinese": "選擇材質（中文）"
       },
       "finishes": {
-        "title": "表面处理",
-        "english": "表面处理（英文）",
-        "chinese": "表面处理（中文）",
-        "placeholder": "选择表面处理",
-        "placeholderChinese": "选择表面处理（中文）"
+        "title": "表面處理",
+        "english": "表面處理（英文）",
+        "chinese": "表面處理（中文）",
+        "placeholder": "選擇表面處理",
+        "placeholderChinese": "選擇表面處理（中文）"
       },
       "attributes": {
-        "title": "其他属性",
-        "english": "其他属性（英文）",
-        "chinese": "其他属性（中文）",
-        "placeholder": "选择属性",
-        "placeholderChinese": "选择属性（中文）"
+        "title": "其他屬性",
+        "english": "其他屬性（英文）",
+        "chinese": "其他屬性（中文）",
+        "placeholder": "選擇屬性",
+        "placeholderChinese": "選擇屬性（中文）"
       },
       "otherAttributes": {
-        "title": "其他属性",
-        "add": "添加",
-        "key": "键",
+        "title": "其他屬性",
+        "add": "新增",
+        "key": "鍵",
         "value": "值",
-        "none": "尚未添加其他属性。"
+        "none": "尚未新增其他屬性。"
       }
     },
     "specifications": {
       "dimensions": "尺寸",
-      "width": "宽度",
-      "length": "长度",
+      "width": "寬度",
+      "length": "長度",
       "height": "高度",
-      "cm": "厘米",
-      "otherSpecs": "其他规格",
-      "warranty": "保修",
+      "cm": "公分",
+      "otherSpecs": "其他規格",
+      "warranty": "保固",
       "years": "年",
-      "leadTime": "交货期",
+      "leadTime": "交貨期",
       "days": "天",
-      "allAttributes": "所有属性",
+      "allAttributes": "所有屬性",
       "feature": "特性"
     },
     "customizations": {
-      "title": "产品定制",
-      "add": "添加定制项",
-      "name": "定制名称",
-      "options": "选项",
-      "addOption": "添加选项",
-      "none": "此产品暂无可用定制选项。"
+      "title": "產品自訂",
+      "add": "新增自訂項",
+      "name": "自訂名稱",
+      "options": "選項",
+      "addOption": "新增選項",
+      "none": "此產品暫無可用自訂選項。"
     },
     "actions": {
-      "fineTune": "微调",
+      "fineTune": "微調",
       "cancel": "取消",
-      "save": "保存",
-      "saving": "保存中...",
-      "close": "关闭",
-      "discardChanges": "放弃更改？"
+      "save": "儲存",
+      "saving": "儲存中...",
+      "close": "關閉",
+      "discardChanges": "放棄變更？"
     }
   }
 }

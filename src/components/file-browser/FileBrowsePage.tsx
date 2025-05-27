@@ -43,6 +43,7 @@ import {
   Loader2, // Spinner icon
   AlertCircle,
   RefreshCw,
+  Info, // For size limit message
 } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { useTranslation } from "@/lib/i18n";
@@ -55,15 +56,18 @@ interface FileItem {
   type: "file" | "folder";
 }
 
+const MAX_TOTAL_UPLOAD_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+
 const DrivePage: React.FC = () => {
   const { t } = useTranslation();
   const [items, setItems] = useState<FileItem[]>([]);
-  const [currentPath, setCurrentPath] = useState<string>(""); // e.g., 'folder1/subfolder2/'
+  const [currentPath, setCurrentPath] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFilesForUpload, setSelectedFilesForUpload] =
     useState<FileList | null>(null);
+  const [currentUploadTotalSize, setCurrentUploadTotalSize] = useState(0); // New state for total size
   const [uploadProgress, setUploadProgress] = useState<
     Record<string, { progress: number; error?: string }>
   >({});
@@ -105,10 +109,39 @@ const DrivePage: React.FC = () => {
     fetchItems(currentPath);
   }, [currentPath, fetchItems]);
 
+  const formatSize = (bytes?: number) => {
+    if (bytes === undefined || bytes === null || bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  };
+
   const handleFileSelectionChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSelectedFilesForUpload(event.target.files);
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      let totalSize = 0;
+      for (let i = 0; i < files.length; i++) {
+        totalSize += files[i].size;
+      }
+      setCurrentUploadTotalSize(totalSize);
+      setSelectedFilesForUpload(files);
+
+      if (totalSize > MAX_TOTAL_UPLOAD_SIZE) {
+        toast(t("fileBrowser.upload.sizeLimitExceededTitle"), {
+          description: t("fileBrowser.upload.sizeLimitExceededDescription", {
+            limit: formatSize(MAX_TOTAL_UPLOAD_SIZE),
+            currentSize: formatSize(totalSize),
+          }),
+          icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+        });
+      }
+    } else {
+      setSelectedFilesForUpload(null);
+      setCurrentUploadTotalSize(0);
+    }
   };
 
   const handleUploadFiles = async () => {
@@ -118,6 +151,18 @@ const DrivePage: React.FC = () => {
       });
       return;
     }
+
+    if (currentUploadTotalSize > MAX_TOTAL_UPLOAD_SIZE) {
+      toast(t("fileBrowser.upload.cannotUploadSizeLimitTitle"), {
+        description: t("fileBrowser.upload.sizeLimitExceededAgain", {
+          limit: formatSize(MAX_TOTAL_UPLOAD_SIZE),
+          currentSize: formatSize(currentUploadTotalSize),
+        }),
+        icon: <AlertCircle className="h-4 w-4 text-red-500" />,
+      });
+      return;
+    }
+
     setIsUploading(true);
     const initialProgress: Record<
       string,
@@ -134,15 +179,11 @@ const DrivePage: React.FC = () => {
     }
     formData.append("prefix", currentPath);
 
-    // Simulate progress updates. For real progress, this needs a more complex setup
-    // (e.g., server-sent events or client-side SDK for direct GCS upload with progress).
-    // This is a simplified client-side simulation.
     Array.from(selectedFilesForUpload).forEach((file) => {
       let currentFileProgress = 0;
       const interval = setInterval(() => {
         currentFileProgress += 10;
         if (currentFileProgress <= 90) {
-          // Stop at 90 to wait for actual server response
           setUploadProgress((prev) => ({
             ...prev,
             [file.name]: { ...prev[file.name], progress: currentFileProgress },
@@ -165,19 +206,16 @@ const DrivePage: React.FC = () => {
         throw new Error(result.error || "Upload failed");
       }
 
-      // Update progress to 100% for successful uploads
       const finalProgress = { ...initialProgress };
       (result.uploadedFiles || []).forEach((uploadedFile: { name: string }) => {
         finalProgress[uploadedFile.name] = { progress: 100 };
       });
-      // For files that might have failed if server doesn't list them or if error was general
       Array.from(selectedFilesForUpload).forEach((file) => {
         if (
           !finalProgress[file.name] ||
           finalProgress[file.name].progress < 100
         ) {
-          if (response.ok) finalProgress[file.name] = { progress: 100 }; // Assume success if overall response ok
-          // else error handled by catch block
+          if (response.ok) finalProgress[file.name] = { progress: 100 };
         }
       });
       setUploadProgress(finalProgress);
@@ -189,10 +227,11 @@ const DrivePage: React.FC = () => {
       });
       fetchItems(currentPath);
       setSelectedFilesForUpload(null);
+      setCurrentUploadTotalSize(0); // Reset total size
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Clear file input
+        fileInputRef.current.value = "";
       }
-      setTimeout(() => setUploadProgress({}), 3000); // Clear progress indicators after a delay
+      setTimeout(() => setUploadProgress({}), 3000);
     } catch (error: any) {
       toast("Upload Error", {
         description: error.message,
@@ -217,7 +256,7 @@ const DrivePage: React.FC = () => {
       });
       return;
     }
-    setIsLoading(true); // Use main loader for this action
+    setIsLoading(true);
     try {
       const response = await fetch("/api/folders/create", {
         method: "POST",
@@ -295,7 +334,6 @@ const DrivePage: React.FC = () => {
   };
 
   const handleViewFile = async (filePath: string) => {
-    // Add a temporary loading state for this specific action if desired
     try {
       const response = await fetch(
         `/api/files/view?filePath=${encodeURIComponent(filePath)}`
@@ -334,14 +372,6 @@ const DrivePage: React.FC = () => {
     return crumbs;
   };
 
-  const formatSize = (bytes?: number) => {
-    if (bytes === undefined || bytes === null || bytes === 0) return "0 B";
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return "--";
     try {
@@ -356,6 +386,8 @@ const DrivePage: React.FC = () => {
       return "--";
     }
   };
+
+  const isOverSizeLimit = currentUploadTotalSize > MAX_TOTAL_UPLOAD_SIZE;
 
   return (
     <div className="container mx-auto space-y-6">
@@ -421,6 +453,19 @@ const DrivePage: React.FC = () => {
                 className="w-full"
                 disabled={isUploading || isLoading}
               />
+              {selectedFilesForUpload && selectedFilesForUpload.length > 0 && (
+                <div
+                  className={`mt-1 text-xs flex items-center ${
+                    isOverSizeLimit ? "text-red-600" : "text-muted-foreground"
+                  }`}
+                >
+                  <Info className="h-3 w-3 mr-1" />
+                  {t("fileBrowser.upload.selectedSize", {
+                    currentSize: formatSize(currentUploadTotalSize),
+                    limit: formatSize(MAX_TOTAL_UPLOAD_SIZE),
+                  })}
+                </div>
+              )}
             </div>
             <Button
               onClick={handleUploadFiles}
@@ -428,7 +473,8 @@ const DrivePage: React.FC = () => {
                 !selectedFilesForUpload ||
                 selectedFilesForUpload.length === 0 ||
                 isUploading ||
-                isLoading
+                isLoading ||
+                isOverSizeLimit // Disable if over size limit
               }
               className="w-full sm:w-auto"
             >
@@ -539,12 +585,14 @@ const DrivePage: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {isLoading && (
-            <div className="flex items-center justify-center h-40">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="ml-2">{t("fileBrowser.table.loading")}</p>
-            </div>
-          )}
+          {isLoading &&
+            !isUploading &&
+            items.length === 0 && ( // Ensure loader doesn't show over progress
+              <div className="flex items-center justify-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="ml-2">{t("fileBrowser.table.loading")}</p>
+              </div>
+            )}
 
           {!isLoading && items.length === 0 && (
             <div className="text-center py-10 text-muted-foreground">

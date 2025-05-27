@@ -142,7 +142,12 @@
       "success": "Upload Successful",
       "successDescription": "{count} file(s) uploaded.",
       "error": "Upload Error",
-      "progress": "Upload Progress"
+      "progress": "Upload Progress",
+      "sizeLimitExceededTitle": "File Size Limit Exceeded",
+      "sizeLimitExceededDescription": "Selected files ({currentSize}) exceed the total limit of {limit}.",
+      "cannotUploadSizeLimitTitle": "Upload Blocked",
+      "sizeLimitExceededAgain": "Cannot upload. Total file size ({currentSize}) exceeds the {limit} limit.",
+      "selectedSize": "Selected: {currentSize} / {limit}"
     },
     "folder": {
       "create": {
