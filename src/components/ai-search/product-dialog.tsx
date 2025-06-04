@@ -641,280 +641,222 @@ export function ProductDialog({
                     <Separator />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {!isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="colors_english">
-                            {t("productDialog.details.colors.english")}
-                          </Label>
-                          <MultiSelect
-                            options={colorOptionsToUse.map((color) => ({
-                              label: color,
-                              value: color,
-                            }))}
-                            selected={
-                              isChinese
-                                ? currentProduct.colors_chinese || []
-                                : currentProduct.colors_english || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange(
-                                isChinese ? "colors_chinese" : "colors_english",
-                                selected
-                              )
-                            }
-                            placeholder={
-                              isChinese
-                                ? t(
-                                    "productDialog.details.colors.placeholderChinese"
-                                  )
-                                : t("productDialog.details.colors.placeholder")
-                            }
-                          />
-                        </div>
-                      )}
-
-                      {isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="colors_chinese">
-                            {t("productDialog.details.colors.chinese")}
-                          </Label>
-                          <MultiSelect
-                            options={colorOptionsToUse.map((color) => ({
-                              label: color,
-                              value: color,
-                            }))}
-                            selected={
-                              isChinese
-                                ? currentProduct.colors_english || []
-                                : currentProduct.colors_chinese || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange(
-                                isChinese ? "colors_english" : "colors_chinese",
-                                selected
-                              )
-                            }
-                            placeholder={
-                              isChinese
-                                ? t(
-                                    "productDialog.details.colors.placeholderEnglish"
-                                  )
-                                : t("productDialog.details.colors.placeholder")
-                            }
-                          />
-                        </div>
-                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor={
+                            isChinese ? "colors_chinese" : "colors_english"
+                          }
+                        >
+                          {t("productDialog.details.colors.title")}
+                        </Label>
+                        <MultiSelect
+                          options={colorOptionsToUse.map((color) => ({
+                            label: color,
+                            value: color,
+                          }))}
+                          selected={
+                            isChinese
+                              ? currentProduct.colors_chinese || []
+                              : currentProduct.colors_english || []
+                          }
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese ? "colors_chinese" : "colors_english",
+                              selected
+                            )
+                          }
+                          placeholder={t(
+                            "productDialog.details.colors.placeholder"
+                          )}
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {!isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="product_materials_english">
-                            {t("productDialog.details.materials.english")}
-                          </Label>
-                          <MultiSelect
-                            options={materialOptionsToUse.map((material) => ({
-                              label: material,
-                              value: material,
-                            }))}
-                            selected={
-                              currentProduct.product_materials_english || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange(
-                                "product_materials_english",
-                                selected
-                              )
-                            }
-                            placeholder={t(
-                              "productDialog.details.materials.placeholder"
-                            )}
-                          />
-                        </div>
-                      )}
-
-                      {isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="product_materials_chinese">
-                            {t("productDialog.details.materials.chinese")}
-                          </Label>
-                          <MultiSelect
-                            options={materialOptionsToUse.map((material) => ({
-                              label: material,
-                              value: material,
-                            }))}
-                            selected={
-                              currentProduct.product_materials_chinese || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange(
-                                "product_materials_chinese",
-                                selected
-                              )
-                            }
-                            placeholder={t(
-                              "productDialog.details.materials.placeholderChinese"
-                            )}
-                          />
-                        </div>
-                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor={
+                            isChinese
+                              ? "product_materials_chinese"
+                              : "product_materials_english"
+                          }
+                        >
+                          {t("productDialog.details.materials.title")}
+                        </Label>
+                        <MultiSelect
+                          options={materialOptionsToUse.map((material) => ({
+                            label: material,
+                            value: material,
+                          }))}
+                          selected={
+                            isChinese
+                              ? currentProduct.product_materials_chinese || []
+                              : currentProduct.product_materials_english || []
+                          }
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese
+                                ? "product_materials_chinese"
+                                : "product_materials_english",
+                              selected
+                            )
+                          }
+                          placeholder={t(
+                            "productDialog.details.materials.placeholder"
+                          )}
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {!isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="product_finishes_english">
-                            {t("productDialog.details.finishes.english")}
-                          </Label>
-                          <MultiSelect
-                            options={finishOptionsToUse.map((finish) => ({
-                              label: finish,
-                              value: finish,
-                            }))}
-                            selected={
-                              currentProduct.product_finishes_english || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange("product_finishes_english", selected)
-                            }
-                            placeholder={t(
-                              "productDialog.details.finishes.placeholder"
-                            )}
-                          />
-                        </div>
-                      )}
-
-                      {isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="product_finishes_chinese">
-                            {t("productDialog.details.finishes.chinese")}
-                          </Label>
-                          <MultiSelect
-                            options={finishOptionsToUse.map((finish) => ({
-                              label: finish,
-                              value: finish,
-                            }))}
-                            selected={
-                              currentProduct.product_finishes_chinese || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange("product_finishes_chinese", selected)
-                            }
-                            placeholder={t(
-                              "productDialog.details.finishes.placeholderChinese"
-                            )}
-                          />
-                        </div>
-                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor={
+                            isChinese
+                              ? "product_finishes_chinese"
+                              : "product_finishes_english"
+                          }
+                        >
+                          {t("productDialog.details.finishes.title")}
+                        </Label>
+                        <MultiSelect
+                          options={finishOptionsToUse.map((finish) => ({
+                            label: finish,
+                            value: finish,
+                          }))}
+                          selected={
+                            isChinese
+                              ? currentProduct.product_finishes_chinese || []
+                              : currentProduct.product_finishes_english || []
+                          }
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese
+                                ? "product_finishes_chinese"
+                                : "product_finishes_english",
+                              selected
+                            )
+                          }
+                          placeholder={t(
+                            "productDialog.details.finishes.placeholder"
+                          )}
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {!isChinese && (
-                        <div className="space-y-2">
-                          <Label htmlFor="additional_attributes_english">
-                            {t("productDialog.details.attributes.english")}
-                          </Label>
-                          <MultiSelect
-                            options={attributeOptionsToUse.map((attr) => ({
-                              label: attr,
-                              value: attr,
-                            }))}
-                            selected={
-                              currentProduct.additional_attributes_english || []
-                            }
-                            onChange={(selected: string[]) =>
-                              handleChange(
-                                "additional_attributes_english",
-                                selected
-                              )
-                            }
-                            placeholder={t(
-                              "productDialog.details.attributes.placeholder"
-                            )}
-                          />
-                        </div>
-                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor={
+                            isChinese
+                              ? "additional_attributes_chinese"
+                              : "additional_attributes_english"
+                          }
+                        >
+                          {t("productDialog.details.attributes.title")}
+                        </Label>
+                        <MultiSelect
+                          options={attributeOptionsToUse.map((attr) => ({
+                            label: attr,
+                            value: attr,
+                          }))}
+                          selected={
+                            isChinese
+                              ? currentProduct.additional_attributes_chinese ||
+                                []
+                              : currentProduct.additional_attributes_english ||
+                                []
+                          }
+                          onChange={(selected: string[]) =>
+                            handleChange(
+                              isChinese
+                                ? "additional_attributes_chinese"
+                                : "additional_attributes_english",
+                              selected
+                            )
+                          }
+                          placeholder={t(
+                            "productDialog.details.attributes.placeholder"
+                          )}
+                        />
+                      </div>
 
-                      {isChinese && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <Label>
-                              {t("productDialog.details.otherAttributes.title")}
-                            </Label>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={handleAddOtherAttribute}
-                            >
-                              <Plus className="h-4 w-4 mr-1" />{" "}
-                              {t("productDialog.details.otherAttributes.add")}
-                            </Button>
-                          </div>
-                          <div className="grid grid-cols-1 gap-2">
-                            {(currentProduct.other_attributes || []).map(
-                              (attr, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-2"
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <Label>
+                            {t("productDialog.details.otherAttributes.title")}
+                          </Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleAddOtherAttribute}
+                          >
+                            <Plus className="h-4 w-4 mr-1" />{" "}
+                            {t("productDialog.details.otherAttributes.add")}
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2">
+                          {(currentProduct.other_attributes || []).map(
+                            (attr, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2"
+                              >
+                                <Input
+                                  placeholder={t(
+                                    "productDialog.details.otherAttributes.key"
+                                  )}
+                                  value={attr.key}
+                                  onChange={(e) =>
+                                    handleUpdateOtherAttribute(
+                                      index,
+                                      "key",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="flex-1"
+                                />
+                                <Input
+                                  placeholder={t(
+                                    "productDialog.details.otherAttributes.value"
+                                  )}
+                                  value={attr.value}
+                                  onChange={(e) =>
+                                    handleUpdateOtherAttribute(
+                                      index,
+                                      "value",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="flex-1"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() =>
+                                    handleRemoveOtherAttribute(index)
+                                  }
                                 >
-                                  <Input
-                                    placeholder={t(
-                                      "productDialog.details.otherAttributes.key"
+                                  <Trash className="h-4 w-4" />
+                                  <span className="sr-only">
+                                    {t(
+                                      "productDialog.details.otherAttributes.remove"
                                     )}
-                                    value={attr.key}
-                                    onChange={(e) =>
-                                      handleUpdateOtherAttribute(
-                                        index,
-                                        "key",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="flex-1"
-                                  />
-                                  <Input
-                                    placeholder={t(
-                                      "productDialog.details.otherAttributes.value"
-                                    )}
-                                    value={attr.value}
-                                    onChange={(e) =>
-                                      handleUpdateOtherAttribute(
-                                        index,
-                                        "value",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="flex-1"
-                                  />
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() =>
-                                      handleRemoveOtherAttribute(index)
-                                    }
-                                  >
-                                    <Trash className="h-4 w-4" />
-                                    <span className="sr-only">
-                                      {t(
-                                        "productDialog.details.otherAttributes.remove"
-                                      )}
-                                    </span>
-                                  </Button>
-                                </div>
-                              )
-                            )}
-                            {(currentProduct.other_attributes || []).length ===
-                              0 && (
-                              <p className="text-sm text-muted-foreground">
-                                {t(
-                                  "productDialog.details.otherAttributes.none"
-                                )}
-                              </p>
-                            )}
-                          </div>
+                                  </span>
+                                </Button>
+                              </div>
+                            )
+                          )}
+                          {(currentProduct.other_attributes || []).length ===
+                            0 && (
+                            <p className="text-sm text-muted-foreground">
+                              {t("productDialog.details.otherAttributes.none")}
+                            </p>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </TabsContent>
 

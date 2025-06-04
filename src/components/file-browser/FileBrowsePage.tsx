@@ -63,6 +63,7 @@ const DrivePage: React.FC = () => {
   const [items, setItems] = useState<FileItem[]>([]);
   const [currentPath, setCurrentPath] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDataRefreshing, setIsDataRefreshing] = useState(false);
   const [showCreateFolderDialog, setShowCreateFolderDialog] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFilesForUpload, setSelectedFilesForUpload] =
@@ -502,7 +503,9 @@ const DrivePage: React.FC = () => {
                   <Button
                     className="cursor-pointer bg-amber-500 shadow-md hover:bg-amber-400"
                     variant="secondary"
+                    disabled={isDataRefreshing}
                     onClick={async () => {
+                      setIsDataRefreshing(true);
                       try {
                         let path = currentPath;
                         if (path.length > 1 && path.endsWith("/")) {
@@ -525,10 +528,17 @@ const DrivePage: React.FC = () => {
                             "fileBrowser.dataRefresh.errorDescription"
                           ),
                         });
+                      } finally {
+                        setIsDataRefreshing(false);
                       }
                     }}
                   >
-                    <RefreshCw /> {t("fileBrowser.dataRefresh.button")}
+                    {isDataRefreshing ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                    )}
+                    {t("fileBrowser.dataRefresh.button")}
                   </Button>
                   <Label className="mt-2 text-xs text-muted-foreground">
                     {t("fileBrowser.dataRefresh.remaining")}

@@ -12,7 +12,7 @@ const newSession = `projects/${projectID}/locations/global/collections/default_c
 const searchUrl = `https://discoveryengine.googleapis.com/v1alpha/projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/servingConfigs/default_search:search`;
 const answerUrl = `https://discoveryengine.googleapis.com/v1alpha/projects/${projectID}/locations/global/collections/default_collection/engines/${appID}/servingConfigs/default_answer:answer`;
 
-const buildQuery = (query: string) => ({
+const buildQuery = (query: string, languageCode = "en-US") => ({
   query,
   pageSize: 10,
   queryExpansionSpec: {
@@ -22,7 +22,7 @@ const buildQuery = (query: string) => ({
     mode: "auto",
   },
   useLatestData: true,
-  languageCode: "en-US",
+  languageCode,
   userInfo: {
     timeZone: "Asia/Taipei",
   },
@@ -78,6 +78,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query");
+    const languageCode = searchParams.get("languageCode") || "en-US";
     if (!query) {
       return NextResponse.json(
         { error: "Query parameter is required" },
@@ -94,7 +95,7 @@ export async function GET(request: Request) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(buildQuery(query)),
+      body: JSON.stringify(buildQuery(query, languageCode)),
     });
 
     const data = await response.json();

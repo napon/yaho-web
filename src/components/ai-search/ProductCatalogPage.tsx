@@ -25,8 +25,14 @@ export default function ProductCatalog() {
   const [answer, setAnswer] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const getLanguageCode = () => {
+    return t("lang") === "zh" ? "zh-TW" : "en-US";
+  };
+
   const fetchProducts = async (query: string) => {
-    const response = await fetch("/api/search?query=" + query);
+    const response = await fetch(
+      "/api/search?query=" + query + "&languageCode=" + getLanguageCode()
+    );
     const { summaryAnswer, results } = await response.json();
     setProducts(
       results?.map(
