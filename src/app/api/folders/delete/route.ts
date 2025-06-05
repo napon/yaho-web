@@ -14,13 +14,17 @@ export async function DELETE(req: NextRequest) {
 
   try {
     // Delete all files within the folder (prefix)
+    console.log("deleting files in", folderPath);
     await bucket.deleteFiles({ prefix: folderPath });
 
     // Delete corresponding index(es) from vertex ai
     // remove last / from folderPath
-    const folderPathWithoutLastSlash = folderPath.slice(0, -1);
+    const folderPathWithoutLastSlash = folderPath
+      .slice(0, -1)
+      .replaceAll("/", "_");
+    console.log("deleting index at", folderPathWithoutLastSlash);
     await indexBucket.deleteFiles({
-      prefix: folderPathWithoutLastSlash.replace("/", "_"),
+      prefix: folderPathWithoutLastSlash,
     });
 
     return NextResponse.json({
